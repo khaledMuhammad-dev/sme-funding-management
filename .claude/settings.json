@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Grep|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "INPUT=$(cat); if printf '%s' \"$INPUT\" | grep -q 'docs/business/'; then echo 'BLOCKED: docs/business/* are the assembled HUMAN-ONLY full documents (large). Use docs/map/INDEX.md to find the specific module/foundation file for your task — it contains the same content, split.' >&2; exit 2; fi; exit 0"
+          }
+        ]
+      }
+    ]
+  }
+}
