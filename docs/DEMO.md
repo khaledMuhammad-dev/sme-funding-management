@@ -1,5 +1,7 @@
 # 🎬 Demo walkthrough — the happy scenario
 
+> النسخة العربية: [DEMO.ar.md](DEMO.ar.md)
+
 How to present the full funding lifecycle, from a new application to a funded,
 monitored project, in one browser session. This is the same path the
 `e2e/lifecycle.spec.ts` dry-run verifies, so it has no dead ends.

@@ -1,6 +1,6 @@
 # Module 01 — Application Portal (بوابة التقديم الإلكترونية)
 
-**Audience:** beneficiary (المستفيدة). **Routes:** `/`, `/apply`, `/track`.
+**Audience:** beneficiary (المستفيد). **Routes:** `/`, `/apply`, `/track`.
 **Load with:** `foundation/data-model.md`, `foundation/localization.md`, `foundation/design-system.md`.
 
 ## Purpose

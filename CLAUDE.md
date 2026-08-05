@@ -1,6 +1,6 @@
 # CLAUDE.md — SME Funding Management Platform (Frontend Demo)
 
-Frontend-only demo (React + Vite + TS) of a funding-program management platform for women entrepreneurs.
+Frontend-only demo (React + Vite + TS) of a funding-program management platform for entrepreneurs.
 Goal: win the client. No backend — static fixtures + simulated network. Arabic-first (RTL) + English.
 
 ## 🗺️ Context protocol (MANDATORY — designed to keep context small)

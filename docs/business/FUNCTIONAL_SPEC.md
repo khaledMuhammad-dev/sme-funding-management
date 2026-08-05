@@ -4,7 +4,7 @@
 > This document is **assembled from** `docs/map/` (foundation + modules) — those files are the source of truth.
 > To regenerate after editing map files: `bash docs/build-spec.sh`
 
-**Version:** 1.0 · **Date:** 2026-08-04
+**Version:** 1.0 · **Date:** 2026-08-05
 
 ---
 
@@ -84,8 +84,8 @@ src/
 
 # Foundation — Design System
 
-Award-level polish. Professional fintech/government-grant aesthetic; warm, trustworthy, feminine-leaning
-accents (program serves women entrepreneurs) without being stereotypical.
+Award-level polish. Professional fintech/government-grant aesthetic; warm and trustworthy
+accents without being stereotypical.
 
 ## Theming
 
@@ -300,7 +300,7 @@ interface MorphIconProps {
 
 # Module 01 — Application Portal (بوابة التقديم الإلكترونية)
 
-**Audience:** beneficiary (المستفيدة). **Routes:** `/`, `/apply`, `/track`.
+**Audience:** beneficiary (المستفيد). **Routes:** `/`, `/apply`, `/track`.
 **Load with:** `foundation/data-model.md`, `foundation/localization.md`, `foundation/design-system.md`.
 
 ## Purpose
@@ -591,7 +591,7 @@ KPIs and reports over the whole portfolio. All numbers derived from the demo sto
 ### Charts (recharts via shadcn chart, all theme-aware + RTL)
 - Applications by status (donut, colors = status palette).
 - Applications over time (area, last 6 months).
-- Beneficiaries by region (horizontal bar) — توزيع المستفيدات حسب المناطق.
+- Beneficiaries by region (horizontal bar) — توزيع المستفيدين حسب المناطق.
 - Disbursed amount by month (bar).
 - Funding impact: avg revenue growth % (line, from module 07 impact fns).
 

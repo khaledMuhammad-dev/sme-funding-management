@@ -15,7 +15,7 @@ KPIs and reports over the whole portfolio. All numbers derived from the demo sto
 ### Charts (recharts via shadcn chart, all theme-aware + RTL)
 - Applications by status (donut, colors = status palette).
 - Applications over time (area, last 6 months).
-- Beneficiaries by region (horizontal bar) — توزيع المستفيدات حسب المناطق.
+- Beneficiaries by region (horizontal bar) — توزيع المستفيدين حسب المناطق.
 - Disbursed amount by month (bar).
 - Funding impact: avg revenue growth % (line, from module 07 impact fns).
 

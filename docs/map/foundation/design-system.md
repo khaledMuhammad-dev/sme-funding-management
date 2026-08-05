@@ -1,7 +1,7 @@
 # Foundation — Design System
 
-Award-level polish. Professional fintech/government-grant aesthetic; warm, trustworthy, feminine-leaning
-accents (program serves women entrepreneurs) without being stereotypical.
+Award-level polish. Professional fintech/government-grant aesthetic; warm and trustworthy
+accents without being stereotypical.
 
 ## Theming
 
