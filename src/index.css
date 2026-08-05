@@ -282,6 +282,12 @@
         @apply font-sans;
         -webkit-font-smoothing: antialiased;
         scroll-behavior: smooth;
+        /* Fluid root size. Tailwind's spacing, radii and type are all `rem`, so
+           the whole scale rides on this: 14px below ~933px viewport, 16px from
+           ~1067px up, interpolated between. Desktop is unchanged from the 16px
+           the design was drawn at; narrow screens get proportionally tighter
+           type and chrome instead of a desktop layout crammed into 360px. */
+        font-size: clamp(14px, 1.5vw, 16px);
     }
 
     /* Arabic gets IBM Plex Sans Arabic first; sizes stay identical across locales */

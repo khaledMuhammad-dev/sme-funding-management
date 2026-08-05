@@ -11,6 +11,7 @@ import {
   DashboardIcon,
   DisbursementIcon,
   FollowUpIcon,
+  HomeIcon,
   InterviewIcon,
   ReportsIcon,
   SettingsIcon,
@@ -175,11 +176,9 @@ export function AdminShell() {
         >
           <ThemeToggle />
           <LangSwitch />
-          {!collapsed ? (
-            <Button asChild variant="ghost" size="sm" className="ms-auto text-xs">
-              <Link to={ROUTES.landing}>{t('nav.portal')}</Link>
-            </Button>
-          ) : null}
+          {/* The way back to the portal used to live here, where a collapsed
+              sidebar — and every screen below `lg`, which has no sidebar at
+              all — hid it completely. It is in the header now, always. */}
         </div>
       </motion.aside>
 
@@ -219,6 +218,16 @@ export function AdminShell() {
           <Breadcrumbs />
 
           <div className="ms-auto flex items-center gap-1">
+            {/* Mirrors the admin button in the portal header: outline, icon
+                before the label, present at every width. The button's own
+                `gap` keeps the glyph on the reading-start side in both
+                directions, and it is the officer's only route back on mobile. */}
+            <Button asChild size="sm" variant="outline">
+              <Link to={ROUTES.landing}>
+                <HomeIcon size={16} />
+                {t('nav.portal')}
+              </Link>
+            </Button>
             <NotificationBell />
             {/* Decorative avatar for the signed-in officer — the initials are a
                 monogram, so they are hidden rather than read out as letters. */}
