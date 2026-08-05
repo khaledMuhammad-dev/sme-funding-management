@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
@@ -42,6 +42,7 @@ export default function MyContractsPage() {
   // and that is only known once the read resolves. Derived rather than set by an
   // effect, so it can never fight a tab he has actually chosen.
   const [tab, setTab] = useState<TabValue | null>(null)
+  const defaultTab = useRef<TabValue | null>(null)
   const [openContract, setOpenContract] = useState<ContractRow | null>(null)
 
   // Same query key the bell and the applications list use, so this shares one read.
@@ -73,7 +74,6 @@ export default function MyContractsPage() {
     all: rows.length,
   }
   const shown: Record<TabValue, ContractRow[]> = { awaiting, signed, all: rows }
-  const activeTab: TabValue = tab ?? (awaiting.length > 0 ? 'awaiting' : 'all')
 
   /*
     `enabled: false` leaves a query pending forever, so "no references at all"
@@ -83,6 +83,16 @@ export default function MyContractsPage() {
   const loading =
     refs.length > 0 &&
     (applicationsPending || (applicationIds.length > 0 && contractsPending))
+
+  /*
+    Latched on the first resolved read, not recomputed: signing the last contract
+    awaiting him empties that tab, and a live expression would slide him onto
+    another one at the exact moment he was looking at the result of his own click.
+  */
+  if (defaultTab.current === null && !loading) {
+    defaultTab.current = awaiting.length > 0 ? 'awaiting' : 'all'
+  }
+  const activeTab: TabValue = tab ?? defaultTab.current ?? 'all'
 
   const emptyFor = (value: TabValue) => (
     <EmptyState
