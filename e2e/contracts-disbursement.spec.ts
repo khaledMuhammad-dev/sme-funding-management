@@ -204,7 +204,7 @@ test('the contract picker searches in Arabic', async ({ page }) => {
   // The Arabic name is searchable from the Arabic screen.
   await dialog.getByTestId('contract-candidate-search').fill(covered.beneficiary.fullName)
   await expect(dialog.getByRole('radio')).toHaveCount(1)
-  await expect(dialog.getByRole('radio').first()).toContainText('صدر لها عقد بالفعل')
+  await expect(dialog.getByRole('radio').first()).toContainText('صدر له عقد بالفعل')
 
   await dialog.getByTestId('contract-candidate-search').fill('لا-يوجد')
   await expect(dialog.getByText(/لا يوجد طلب معتمد يطابق/)).toBeVisible()
@@ -689,7 +689,7 @@ test('the signing flow and the money path work in Arabic', async ({ page }) => {
   // The wait on the applicant is stated in Arabic, on the row and in the doc.
   await expect(
     page.locator('tbody tr').filter({ hasText: sent.contractNo }).getByTestId('awaiting-applicant'),
-  ).toHaveText('بانتظار توقيع المستفيدة')
+  ).toHaveText('بانتظار توقيع المستفيد')
 
   await openRowMenu(page, sent.contractNo)
   await expect(page.getByRole('menuitem', { name: 'توقيع العقد' })).toHaveCount(0)
@@ -751,7 +751,7 @@ test('the signing flow and the money path work in Arabic', async ({ page }) => {
   await openRowMenu(page, ordered.orderNo)
   await page.getByRole('menuitem', { name: 'تأكيد الصرف' }).click()
   const paidDialog = page.getByRole('dialog')
-  await expect(paidDialog.getByText('المستفيدة')).toBeVisible()
+  await expect(paidDialog.getByText('المستفيد')).toBeVisible()
   await paidDialog.getByRole('button', { name: 'تأكيد الصرف' }).click()
 
   await expect

@@ -231,7 +231,7 @@ test('the client KPI set renders in Arabic RTL with the same numbers', async ({ 
   // Reports: the geographic tab is localized too.
   await page.getByRole('link', { name: 'التقارير' }).first().click()
   await page.getByRole('tab', { name: 'التوزيع الجغرافي' }).click()
-  await expect(page.getByRole('columnheader', { name: 'المستفيدات' })).toBeVisible()
+  await expect(page.getByRole('columnheader', { name: 'المستفيدون' })).toBeVisible()
   await expect(page.locator('table tbody tr').first()).toBeVisible()
 
   expect(errors, errors.join('\n')).toEqual([])

@@ -47,7 +47,7 @@ async function openPendingForm(page: Page, lang: 'en' | 'ar' = 'en') {
 
 const numbers = {
   en: { revenue: /Revenue this period/, employees: /Current number of employees/, growth: /Estimated growth/ },
-  ar: { revenue: /إيرادات الفترة/, employees: /عدد الموظفات حاليًا/, growth: /نسبة النمو المقدّرة/ },
+  ar: { revenue: /إيرادات الفترة/, employees: /عدد الموظفين حاليًا/, growth: /نسبة النمو المقدّرة/ },
 }
 
 async function fillFigures(page: Page, lang: 'en' | 'ar' = 'en') {

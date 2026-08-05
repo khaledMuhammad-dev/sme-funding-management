@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Women Entrepreneurs Funding Platform",
+    "appName": "Entrepreneurs Funding Platform",
     "appShort": "Funding Platform",
     "search": "Search",
     "searchPlaceholder": "Search by name or reference…",
@@ -173,7 +173,7 @@
     "densityCompact": "Compact"
   },
   "landing": {
-    "eyebrow": "Women Entrepreneurs Funding Programme",
+    "eyebrow": "Entrepreneurs Funding Programme",
     "title": "Funding that starts with your idea and ends with a running business",
     "subtitle": "Apply online and follow every stage as it happens — from automated screening through to the first disbursement.",
     "ctaApply": "Start your application",
@@ -556,7 +556,7 @@
     "doc": {
       "heading": "Project Funding Agreement",
       "party1": "First party",
-      "party1Name": "Women Entrepreneurs Funding Programme",
+      "party1Name": "Entrepreneurs Funding Programme",
       "party2": "Second party",
       "preamble": "Whereas the first party provides funding to support small enterprises, and the second party wishes to obtain such funding, both parties have agreed as follows:",
       "clause1": "The first party shall disburse the amount stated above to the second party's account within ten working days of signature.",

@@ -48,7 +48,7 @@ export const interviews: Interview[] = applications
       verdict: upcoming ? undefined : i % 5 === 2 ? 'conditional' : 'recommend',
       notes: upcoming
         ? undefined
-        : 'عرضت صاحبة المشروع خطة تشغيل واضحة وقدرة جيدة على إدارة التدفقات النقدية.',
+        : 'عرض صاحب المشروع خطة تشغيل واضحة وقدرة جيدة على إدارة التدفقات النقدية.',
     }
   })
 

@@ -48,9 +48,9 @@ export function PortalNotificationBell() {
   const markRead = useApplicantStore((s) => s.markRead)
 
   /*
-    Every application this browser remembers, not just the active one: a woman
-    with two files in flight would otherwise see a badge for whichever she
-    happened to open last, and silently miss messages about the other.
+    Every one of his applications, not just the active one: an applicant with two
+    files in flight would otherwise see a badge for whichever he happened to open
+    last, and silently miss messages about the other.
   */
   const { data: rows = [] } = useApplicationsByRefs(refs)
   const resolved = rows.filter((row) => row.application)
