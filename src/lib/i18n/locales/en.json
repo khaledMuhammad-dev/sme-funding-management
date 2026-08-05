@@ -848,5 +848,11 @@
     "acceptTerms": "You must accept the terms and conditions",
     "requiredDocs": "Please upload all required documents",
     "crRequired": "Commercial register number is required"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for doesn't exist or has been moved.",
+    "backHome": "Back to home",
+    "trackApplication": "Track application"
   }
 }

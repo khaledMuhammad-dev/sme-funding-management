@@ -18,6 +18,7 @@ const MyApplicationsPage = lazy(
 );
 const MyContractsPage = lazy(() => import("./app/portal/MyContractsPage"));
 const FollowUpFormPage = lazy(() => import("./app/portal/FollowUpFormPage"));
+const NotFoundPage = lazy(() => import("./app/portal/NotFoundPage"));
 
 const DashboardPage = lazy(() => import("./app/admin/DashboardPage"));
 const ApplicationsPage = lazy(() => import("./app/admin/ApplicationsPage"));
@@ -108,6 +109,7 @@ export default function App() {
                   path={ROUTES.followUpForm()}
                   element={<FollowUpFormPage />}
                 />
+                <Route path="*" element={<NotFoundPage />} />
               </Route>
 
               <Route element={<AdminShell />}>
@@ -130,8 +132,6 @@ export default function App() {
                 <Route path={ROUTES.reports} element={<ReportsPage />} />
                 <Route path={ROUTES.settings} element={<SettingsPage />} />
               </Route>
-
-              <Route path="*" element={<LandingPage />} />
             </Routes>
           </Suspense>
         </BrowserRouter>
