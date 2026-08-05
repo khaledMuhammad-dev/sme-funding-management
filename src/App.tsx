@@ -1,121 +1,109 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { lazy, Suspense } from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Toaster } from '@/components/ui/sonner'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useLangEffect, useThemeEffect } from '@/components/shared'
+import { AdminShell } from './app/AdminShell'
+import { PortalShell } from './app/PortalShell'
+import { ROUTES } from './app/routes'
 
-function App() {
-  const [count, setCount] = useState(0)
+/* Route pages are split so the landing page paints before the admin bundle. */
+const LandingPage = lazy(() => import('./app/portal/LandingPage'))
+const ApplyPage = lazy(() => import('./app/portal/ApplyPage'))
+const TrackPage = lazy(() => import('./app/portal/TrackPage'))
+const MyApplicationsPage = lazy(() => import('./app/portal/MyApplicationsPage'))
+const MyContractsPage = lazy(() => import('./app/portal/MyContractsPage'))
+const FollowUpFormPage = lazy(() => import('./app/portal/FollowUpFormPage'))
 
+const DashboardPage = lazy(() => import('./app/admin/DashboardPage'))
+const ApplicationsPage = lazy(() => import('./app/admin/ApplicationsPage'))
+const ApplicationDetailPage = lazy(() => import('./app/admin/ApplicationDetailPage'))
+const InterviewsPage = lazy(() => import('./app/admin/InterviewsPage'))
+const ContractsPage = lazy(() => import('./app/admin/ContractsPage'))
+const DisbursementsPage = lazy(() => import('./app/admin/DisbursementsPage'))
+const FollowUpPage = lazy(() => import('./app/admin/FollowUpPage'))
+const ReportsPage = lazy(() => import('./app/admin/ReportsPage'))
+const SettingsPage = lazy(() => import('./app/admin/SettingsPage'))
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // The demo's "server" is in memory, so nothing goes stale on its own.
+      staleTime: 30_000,
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+})
+
+/**
+ * Companion to `window.__demoStore` in `main.tsx`.
+ *
+ * A test that drives a mutation straight on the store — the applicant's
+ * signature, while her portal mount point is still pending — has to be able to
+ * tell the cache the demo's "server" moved underneath it, exactly as the
+ * mutation hooks do. Dev/preview only; the client build never exposes it.
+ */
+if (import.meta.env.DEV) {
+  ;(window as unknown as Record<string, unknown>).__queryClient = queryClient
+}
+
+/** Matches the page frame so switching routes never shifts the layout. */
+function RouteFallback() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    <div className="space-y-6 p-2">
+      <Skeleton className="h-9 w-64" />
+      <Skeleton className="h-4 w-96" />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Skeleton className="h-28" />
+        <Skeleton className="h-28" />
+        <Skeleton className="h-28" />
+      </div>
+      <Skeleton className="h-80" />
+    </div>
   )
 }
 
-export default App
+function AppEffects() {
+  useThemeEffect()
+  useLangEffect()
+  return null
+}
+
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppEffects />
+      <BrowserRouter>
+        <Suspense fallback={<RouteFallback />}>
+          <Routes>
+            <Route element={<PortalShell />}>
+              <Route path={ROUTES.landing} element={<LandingPage />} />
+              <Route path={ROUTES.apply} element={<ApplyPage />} />
+              <Route path={ROUTES.track} element={<TrackPage />} />
+              <Route path={ROUTES.myApplications} element={<MyApplicationsPage />} />
+              <Route path={ROUTES.myContracts} element={<MyContractsPage />} />
+              <Route path={ROUTES.followUpForm()} element={<FollowUpFormPage />} />
+            </Route>
+
+            <Route element={<AdminShell />}>
+              <Route path={ROUTES.admin} element={<DashboardPage />} />
+              <Route path={ROUTES.applications} element={<ApplicationsPage />} />
+              <Route path={ROUTES.application()} element={<ApplicationDetailPage />} />
+              <Route path={ROUTES.interviews} element={<InterviewsPage />} />
+              <Route path={ROUTES.contracts} element={<ContractsPage />} />
+              <Route path={ROUTES.disbursements} element={<DisbursementsPage />} />
+              <Route path={ROUTES.followUp} element={<FollowUpPage />} />
+              <Route path={ROUTES.reports} element={<ReportsPage />} />
+              <Route path={ROUTES.settings} element={<SettingsPage />} />
+            </Route>
+
+            <Route path="*" element={<LandingPage />} />
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
+      <Toaster position="top-center" richColors closeButton />
+    </QueryClientProvider>
+  )
+}

@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Design System — SME Funding Management</title>
+<style>
+@font-face{font-family:'Inter';src:url('/fonts/inter-latin-wght-normal.woff2') format('woff2-variations');font-weight:100 900;font-display:swap;}
+@font-face{font-family:'IBM Plex Sans Arabic';src:url('/fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2') format('woff2');font-weight:400;font-display:swap;}
+@font-face{font-family:'IBM Plex Sans Arabic';src:url('/fonts/ibm-plex-sans-arabic-arabic-500-normal.woff2') format('woff2');font-weight:500;font-display:swap;}
+@font-face{font-family:'IBM Plex Sans Arabic';src:url('/fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2') format('woff2');font-weight:600;font-display:swap;}
+@font-face{font-family:'IBM Plex Sans Arabic';src:url('/fonts/ibm-plex-sans-arabic-arabic-700-normal.woff2') format('woff2');font-weight:700;font-display:swap;}
+
+/* ============================================================
+   TOKENS — proposal for src/index.css
+   Every value below is WCAG-audited; see §07 for live ratios.
+   ============================================================ */
+:root{
+  /* parchment surfaces & navy ink */
+  --background:oklch(0.960 0.014 82);        /* #f7f1e8 */
+  --foreground:oklch(0.315 0.040 268);       /* #293146 */
+  --card:oklch(0.987 0.007 82);              /* #fdfaf6 */
+  --card-foreground:oklch(0.315 0.040 268);
+  --popover:oklch(0.993 0.005 82);
+  --popover-foreground:oklch(0.315 0.040 268);
+  --muted:oklch(0.935 0.016 82);             /* #efe9de */
+  --muted-foreground:oklch(0.500 0.028 265); /* #5b6374 */
+  --border:oklch(0.878 0.018 80);            /* #ddd6ca */
+  --input:oklch(0.635 0.022 78);             /* #92897c — form-control boundary, 3:1 (WCAG 1.4.11) */
+
+  /* brand — deep navy */
+  --primary:oklch(0.335 0.048 268);          /* #2c3650 */
+  --primary-foreground:oklch(0.975 0.010 82);
+  --primary-hover:oklch(0.285 0.045 268);
+  --primary-soft:oklch(0.930 0.018 268);
+  --ring:oklch(0.335 0.048 268);
+
+  /* shadcn interactive surface — quiet parchment, NOT terracotta */
+  --secondary:oklch(0.940 0.016 82);
+  --secondary-foreground:oklch(0.335 0.040 268);
+  --accent:oklch(0.928 0.020 82);
+  --accent-foreground:oklch(0.300 0.042 268);
+
+  /* terracotta — the accent hue. fill / ink / soft */
+  --terracotta:oklch(0.685 0.148 42);            /* #e4774a — fill only */
+  --terracotta-foreground:oklch(0.275 0.045 268);/* navy label on the fill */
+  --terracotta-ink:oklch(0.525 0.155 38);        /* #b14019 — text/icon on parchment */
+  --terracotta-soft:oklch(0.930 0.038 45);       /* #ffe1d3 */
+
+  /* brass */
+  --gold:oklch(0.800 0.110 80);              /* #e3b667 — fill only */
+  --gold-foreground:oklch(0.275 0.045 268);
+  --gold-ink:oklch(0.522 0.100 68);          /* #8f5d1e — text on parchment */
+  --gold-soft:oklch(0.945 0.040 80);         /* #fbebcf */
+
+  /* semantic */
+  --success:oklch(0.505 0.105 158);      --success-soft:oklch(0.930 0.040 158);
+  --warning:oklch(0.522 0.100 72);       --warning-soft:oklch(0.940 0.042 78);
+  --destructive:oklch(0.505 0.175 28);   --destructive-soft:oklch(0.933 0.028 28);
+  --destructive-foreground:oklch(0.980 0.006 28);
+  --info:oklch(0.490 0.110 258);         --info-soft:oklch(0.930 0.032 258);
+
+  /* 8 application statuses — solid = ink, soft = fill */
+  --status-new:oklch(0.490 0.110 258);                --status-new-soft:oklch(0.930 0.032 258);
+  --status-incomplete:oklch(0.522 0.100 72);          --status-incomplete-soft:oklch(0.940 0.042 78);
+  --status-under-review:oklch(0.470 0.150 300);       --status-under-review-soft:oklch(0.935 0.030 300);
+  --status-awaiting-interview:oklch(0.500 0.092 225); --status-awaiting-interview-soft:oklch(0.930 0.032 225);
+  --status-approved:oklch(0.505 0.105 158);           --status-approved-soft:oklch(0.930 0.040 158);
+  --status-rejected:oklch(0.505 0.175 28);            --status-rejected-soft:oklch(0.933 0.028 28);
+  --status-disbursed:oklch(0.470 0.075 190);          --status-disbursed-soft:oklch(0.928 0.030 190);
+  --status-follow-up:oklch(0.470 0.030 268);          --status-follow-up-soft:oklch(0.930 0.010 268);
+
+  /* charts */
+  --chart-1:oklch(0.395 0.055 268);
+  --chart-2:oklch(0.615 0.155 40);
+  --chart-3:oklch(0.660 0.115 78);
+  --chart-4:oklch(0.545 0.090 190);
+  --chart-5:oklch(0.560 0.140 300);
+
+  /* sidebar */
+  --sidebar:oklch(0.975 0.010 82);
+  --sidebar-foreground:oklch(0.360 0.035 268);
+  --sidebar-primary:oklch(0.335 0.048 268);
+  --sidebar-primary-foreground:oklch(0.975 0.010 82);
+  --sidebar-accent:oklch(0.930 0.022 82);
+  --sidebar-accent-foreground:oklch(0.300 0.042 268);
+  --sidebar-border:oklch(0.890 0.018 80);
+  --sidebar-ring:oklch(0.335 0.048 268);
+
+  --radius:0.75rem;
+  --shadow-sm:0 1px 2px oklch(0.30 0.04 268/.06), 0 1px 3px oklch(0.30 0.04 268/.06);
+  --shadow-md:0 2px 4px oklch(0.30 0.04 268/.05), 0 6px 16px oklch(0.30 0.04 268/.09);
+  --shadow-lg:0 8px 32px oklch(0.30 0.04 268/.14);
+}
+
+/* ---- OWL NAVY ---- */
+.dark{
+  --background:oklch(0.215 0.032 266);       /* #121928 */
+  --foreground:oklch(0.948 0.012 82);        /* #f2ede5 — parchment, not white */
+  --card:oklch(0.262 0.034 266);             /* #1d2435 */
+  --card-foreground:oklch(0.948 0.012 82);
+  --popover:oklch(0.295 0.034 266);
+  --popover-foreground:oklch(0.948 0.012 82);
+  --muted:oklch(0.305 0.032 266);
+  --muted-foreground:oklch(0.740 0.022 262); /* #a3abb9 */
+  --border:oklch(0.375 0.030 266);
+  --input:oklch(0.560 0.030 266);            /* form-control boundary, 3:1 on card */
+
+  /* the navy button inverts to parchment — highest-contrast element on the ground */
+  --primary:oklch(0.930 0.020 82);           /* #efe7d9 */
+  --primary-foreground:oklch(0.245 0.040 268);
+  --primary-hover:oklch(0.975 0.012 82);
+  --primary-soft:oklch(0.330 0.034 266);
+  --ring:oklch(0.930 0.020 82);
+
+  --secondary:oklch(0.315 0.032 266);
+  --secondary-foreground:oklch(0.948 0.012 82);
+  --accent:oklch(0.315 0.032 266);
+  --accent-foreground:oklch(0.940 0.012 82);
+
+  --terracotta:oklch(0.700 0.150 42);            /* #ea7b4e */
+  --terracotta-foreground:oklch(0.215 0.045 40);
+  --terracotta-ink:oklch(0.760 0.130 45);        /* #f59569 */
+  --terracotta-soft:oklch(0.330 0.070 40);
+
+  --gold:oklch(0.835 0.115 82);
+  --gold-foreground:oklch(0.230 0.040 70);
+  --gold-ink:oklch(0.845 0.105 82);
+  --gold-soft:oklch(0.340 0.055 78);
+
+  --success:oklch(0.775 0.130 158);      --success-soft:oklch(0.320 0.055 158);
+  --warning:oklch(0.835 0.115 78);       --warning-soft:oklch(0.330 0.055 78);
+  --destructive:oklch(0.740 0.150 28);   --destructive-soft:oklch(0.335 0.075 28);
+  --destructive-foreground:oklch(0.200 0.040 28);
+  --info:oklch(0.780 0.100 258);         --info-soft:oklch(0.325 0.055 258);
+
+  --status-new:oklch(0.780 0.100 258);                --status-new-soft:oklch(0.325 0.055 258);
+  --status-incomplete:oklch(0.835 0.115 78);          --status-incomplete-soft:oklch(0.330 0.055 78);
+  --status-under-review:oklch(0.775 0.115 300);       --status-under-review-soft:oklch(0.330 0.060 300);
+  --status-awaiting-interview:oklch(0.790 0.090 225); --status-awaiting-interview-soft:oklch(0.325 0.055 225);
+  --status-approved:oklch(0.775 0.130 158);           --status-approved-soft:oklch(0.320 0.055 158);
+  --status-rejected:oklch(0.740 0.150 28);            --status-rejected-soft:oklch(0.335 0.075 28);
+  --status-disbursed:oklch(0.790 0.070 190);          --status-disbursed-soft:oklch(0.315 0.040 190);
+  --status-follow-up:oklch(0.800 0.025 268);          --status-follow-up-soft:oklch(0.320 0.014 268);
+
+  --chart-1:oklch(0.800 0.030 268);
+  --chart-2:oklch(0.720 0.150 42);
+  --chart-3:oklch(0.845 0.105 82);
+  --chart-4:oklch(0.790 0.070 190);
+  --chart-5:oklch(0.775 0.115 300);
+
+  --sidebar:oklch(0.192 0.030 266);
+  --sidebar-foreground:oklch(0.880 0.014 82);
+  --sidebar-primary:oklch(0.930 0.020 82);
+  --sidebar-primary-foreground:oklch(0.245 0.040 268);
+  --sidebar-accent:oklch(0.300 0.034 266);
+  --sidebar-accent-foreground:oklch(0.940 0.012 82);
+  --sidebar-border:oklch(0.345 0.030 266);
+  --sidebar-ring:oklch(0.930 0.020 82);
+
+  --shadow-sm:0 1px 2px oklch(0.10 0.02 266/.44), 0 1px 3px oklch(0.10 0.02 266/.36);
+  --shadow-md:0 2px 4px oklch(0.10 0.02 266/.40), 0 6px 16px oklch(0.10 0.02 266/.46);
+  --shadow-lg:0 8px 32px oklch(0.08 0.02 266/.60);
+}
+
+/* ============================================================
+   PREVIEW PAGE CHROME (not shipped)
+   ============================================================ */
+*{box-sizing:border-box;}
+html{font-family:'Inter','Helvetica Neue',sans-serif;-webkit-font-smoothing:antialiased;}
+html[dir="rtl"]{font-family:'IBM Plex Sans Arabic','Inter',sans-serif;}
+body{margin:0;background:var(--background);color:var(--foreground);font-size:15px;line-height:1.6;}
+h1,h2,h3{margin:0;text-wrap:balance;letter-spacing:-0.015em;font-weight:600;}
+p{margin:0;}
+code,.mono{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11.5px;letter-spacing:-0.01em;}
+
+.shell{display:grid;grid-template-columns:224px minmax(0,1fr);gap:48px;max-width:1320px;margin:0 auto;padding:32px 32px 120px;}
+@media (max-width:980px){.shell{grid-template-columns:1fr;gap:24px;}.rail{position:static !important;}}
+
+.rail{position:sticky;top:32px;align-self:start;display:flex;flex-direction:column;gap:2px;}
+.rail .brandmark{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.rail .dot{width:26px;height:26px;border-radius:8px;background:var(--primary);position:relative;flex:none;}
+.rail .dot::after{content:"";position:absolute;inset-inline-end:-4px;bottom:-4px;width:12px;height:12px;border-radius:4px;background:var(--terracotta);border:2px solid var(--background);}
+.rail .brandmark b{font-size:13px;font-weight:600;line-height:1.25;}
+.rail a{text-decoration:none;color:var(--muted-foreground);font-size:13px;padding:6px 10px;border-radius:8px;display:flex;justify-content:space-between;gap:8px;}
+.rail a:hover,.rail a:focus-visible{background:var(--accent);color:var(--accent-foreground);}
+.rail a span{opacity:.55;font-variant-numeric:tabular-nums;}
+.rail .toggles{display:flex;gap:6px;margin-top:20px;}
+.rail button{flex:1;font:inherit;font-size:12px;font-weight:500;padding:7px 8px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--foreground);cursor:pointer;}
+.rail button:hover{background:var(--accent);color:var(--accent-foreground);}
+:focus-visible{outline:2px solid var(--ring);outline-offset:2px;}
+
+main{display:flex;flex-direction:column;gap:56px;min-width:0;}
+.pagehead{display:flex;flex-direction:column;gap:10px;padding-bottom:8px;}
+.pagehead h1{font-size:31px;}
+.pagehead p{color:var(--muted-foreground);max-width:64ch;}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--terracotta-ink);}
+
+section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:24px;}
+.sechead{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border);padding-bottom:10px;}
+.sechead h2{font-size:17px;}
+.sechead p{font-size:12.5px;color:var(--muted-foreground);margin-inline-start:auto;text-align:end;}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);}
+.pad{padding:20px;}
+
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:12px;}
+.sw{border:1px solid var(--border);border-radius:calc(var(--radius) * .8);overflow:hidden;background:var(--card);}
+.sw .chip{height:60px;display:flex;align-items:flex-end;padding:8px;}
+.sw .chip em{font-style:normal;font-size:11px;font-weight:600;}
+.sw .meta{padding:8px 10px 10px;display:flex;flex-direction:column;gap:2px;}
+.sw .meta b{font-size:12px;font-weight:600;}
+.sw .meta code{color:var(--muted-foreground);}
+
+.statuses{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;}
+.strow{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:calc(var(--radius) * .8);background:var(--card);}
+.strow .bar{width:4px;align-self:stretch;border-radius:99px;flex:none;}
+.strow .txt{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.strow .txt b{font-size:12.5px;font-weight:600;}
+.strow .txt code{color:var(--muted-foreground);}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:99px;white-space:nowrap;margin-inline-start:auto;}
+.badge .pip{width:6px;height:6px;border-radius:99px;background:currentColor;flex:none;}
+
+.typerow{display:grid;grid-template-columns:118px minmax(0,1fr);gap:16px;align-items:baseline;padding:10px 0;border-bottom:1px dashed var(--border);}
+.typerow:last-child{border-bottom:0;}
+.typerow .k{display:flex;flex-direction:column;gap:2px;}
+.typerow .k b{font-size:11.5px;font-weight:600;}
+.typerow .k code{color:var(--muted-foreground);}
+.specimen{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media (max-width:760px){.specimen{grid-template-columns:1fr;}}
+.spec-ar{font-family:'IBM Plex Sans Arabic',sans-serif;direction:rtl;text-align:right;}
+.spec-en{font-family:'Inter',sans-serif;direction:ltr;text-align:left;}
+
+.scale{display:flex;flex-direction:column;gap:6px;}
+.sline{display:grid;grid-template-columns:56px 72px minmax(0,1fr);gap:12px;align-items:center;}
+.sline .fill{height:14px;border-radius:4px;background:var(--terracotta-soft);border:1px solid var(--terracotta);}
+.radii{display:flex;gap:14px;flex-wrap:wrap;}
+.radii div{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.radii i{display:block;width:66px;height:52px;background:var(--terracotta-soft);border:1px solid var(--terracotta);font-style:normal;}
+.elev{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;}
+.elev div{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;font-size:12px;}
+
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+.btn{font:inherit;font-size:13.5px;font-weight:500;padding:8px 16px;border-radius:calc(var(--radius) * .8);border:1px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .15s,color .15s,box-shadow .15s;}
+.btn-primary{background:var(--primary);color:var(--primary-foreground);box-shadow:var(--shadow-sm);}
+.btn-primary:hover{background:var(--primary-hover);}
+.btn-terracotta{background:var(--terracotta);color:var(--terracotta-foreground);border-color:var(--terracotta-ink);}
+.btn-outline{background:var(--card);border-color:var(--input);color:var(--foreground);}
+.btn-outline:hover{background:var(--accent);color:var(--accent-foreground);}
+.btn-ghost{background:transparent;color:var(--foreground);}
+.btn-ghost:hover{background:var(--accent);color:var(--accent-foreground);}
+.btn-destructive{background:var(--destructive);color:var(--destructive-foreground);}
+.btn[disabled]{opacity:.55;cursor:not-allowed;}
+
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:12.5px;font-weight:500;}
+.field .hint{font-size:11.5px;color:var(--muted-foreground);}
+.input{font:inherit;font-size:13.5px;padding:9px 12px;border-radius:calc(var(--radius) * .8);border:1px solid var(--input);background:var(--card);color:var(--foreground);width:100%;}
+.input::placeholder{color:var(--muted-foreground);}
+.input:focus{outline:2px solid var(--ring);outline-offset:-1px;border-color:var(--ring);}
+.input.err{border-color:var(--destructive);}
+.err-txt{font-size:11.5px;color:var(--destructive);font-weight:500;}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+.stat{display:flex;flex-direction:column;gap:6px;padding:18px 20px;}
+.stat .lbl{font-size:12px;color:var(--muted-foreground);font-weight:500;}
+.stat .val{font-size:28px;font-weight:600;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;line-height:1.1;}
+.stat .trend{font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:5px;}
+.up{color:var(--success);} .down{color:var(--destructive);}
+
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:start;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-foreground);font-weight:600;padding:10px 14px;border-bottom:1px solid var(--border);}
+td{padding:12px 14px;border-bottom:1px solid var(--border);}
+tbody tr:last-child td{border-bottom:0;}
+tbody tr:hover{background:var(--accent);}
+.num{font-variant-numeric:tabular-nums;}
+.tablewrap{overflow-x:auto;}
+
+.timeline{display:flex;flex-direction:column;gap:0;}
+.tl{display:grid;grid-template-columns:24px minmax(0,1fr);gap:12px;}
+.tl .marker{display:flex;flex-direction:column;align-items:center;}
+.tl .marker i{width:10px;height:10px;border-radius:99px;margin-top:5px;flex:none;}
+.tl .marker s{flex:1;width:2px;background:var(--border);text-decoration:none;}
+.tl:last-child .marker s{display:none;}
+.tl .body{padding-bottom:18px;display:flex;flex-direction:column;gap:2px;}
+.tl .body b{font-size:13px;font-weight:600;}
+.tl .body span{font-size:12px;color:var(--muted-foreground);}
+
+.sidebar-demo{background:var(--sidebar);border:1px solid var(--sidebar-border);border-radius:var(--radius);padding:10px;display:flex;flex-direction:column;gap:2px;}
+.sitem{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:calc(var(--radius) * .7);font-size:13px;color:var(--sidebar-foreground);cursor:default;}
+.sitem i{width:16px;height:16px;border-radius:5px;background:currentColor;opacity:.4;flex:none;}
+.sitem:hover{background:var(--sidebar-accent);color:var(--sidebar-accent-foreground);}
+.sitem.active{background:var(--sidebar-primary);color:var(--sidebar-primary-foreground);font-weight:500;}
+.sitem.active i{opacity:.85;}
+
+.progress{height:8px;border-radius:99px;background:var(--muted);overflow:hidden;}
+.progress i{display:block;height:100%;background:var(--primary);border-radius:99px;}
+
+.alert{display:flex;gap:12px;padding:14px 16px;border-radius:calc(var(--radius) * .85);border:1px solid;}
+.alert i{width:8px;height:8px;border-radius:99px;margin-top:7px;flex:none;background:currentColor;}
+.alert .t{font-size:13px;font-weight:600;}
+.alert .d{font-size:12.5px;color:var(--foreground);}
+
+.chartdemo{display:flex;align-items:flex-end;gap:10px;height:130px;}
+.chartdemo div{flex:1;border-radius:6px 6px 0 0;}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted-foreground);margin-top:12px;}
+.legend span{display:inline-flex;align-items:center;gap:6px;}
+.legend em{width:9px;height:9px;border-radius:3px;font-style:normal;}
+
+.note{font-size:12.5px;color:var(--muted-foreground);background:var(--muted);border-radius:calc(var(--radius) * .7);padding:11px 13px;}
+.note b{color:var(--foreground);}
+pre{margin:0;overflow-x:auto;background:var(--muted);border-radius:calc(var(--radius) * .8);padding:14px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;line-height:1.65;direction:ltr;text-align:left;}
+
+/* a11y report */
+.a11y-summary{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:calc(var(--radius) * .85);font-weight:600;font-size:14px;}
+.a11y-summary .big{font-size:24px;font-variant-numeric:tabular-nums;}
+.verdict{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;letter-spacing:.03em;}
+.pass{background:var(--success-soft);color:var(--success);}
+.fail{background:var(--destructive-soft);color:var(--destructive);}
+#a11y td:first-child{width:42%;}
+.ratio{font-variant-numeric:tabular-nums;font-weight:600;}
+.pairprev{display:inline-flex;align-items:center;justify-content:center;min-width:44px;padding:2px 8px;border-radius:6px;font-size:11.5px;font-weight:600;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <nav class="rail">
+    <div class="brandmark"><span class="dot"></span><b>Design System<br>SME Funding</b></div>
+    <a href="#color">Color<span>01</span></a>
+    <a href="#status">Statuses<span>02</span></a>
+    <a href="#type">Typography<span>03</span></a>
+    <a href="#space">Spacing &amp; shape<span>04</span></a>
+    <a href="#components">Components<span>05</span></a>
+    <a href="#charts">Charts<span>06</span></a>
+    <a href="#a11y">Accessibility<span>07</span></a>
+    <a href="#tokens">CSS tokens<span>08</span></a>
+    <div class="toggles">
+      <button id="t-theme" type="button">Dark</button>
+      <button id="t-dir" type="button">عربي / RTL</button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="pagehead">
+      <span class="eyebrow">Foundation · v2 · extracted palette</span>
+      <h1>Parchment ground, navy ink, terracotta accent</h1>
+      <p>Palette lifted from the reference screen: warm parchment surfaces, deep navy as the primary and the text
+      colour, terracotta for the one action that matters on each screen, brass for value and status. Dark mode is
+      owl navy — the same ink colour used as the ground. Every pair below is contrast-audited live in §07;
+      toggle the theme and the numbers recompute.</p>
+    </header>
+
+    <!-- 01 COLOR -->
+    <section id="color">
+      <div class="sechead"><h2>01 · Color</h2><p>Four families: parchment · navy · terracotta · brass</p></div>
+
+      <div class="swatches">
+        <div class="sw"><div class="chip" style="background:var(--primary);color:var(--primary-foreground)"><em>Aa · primary</em></div><div class="meta"><b>Navy</b><code>--primary</code></div></div>
+        <div class="sw"><div class="chip" style="background:var(--primary-hover);color:var(--primary-foreground)"><em>Aa</em></div><div class="meta"><b>Navy hover</b><code>--primary-hover</code></div></div>
+        <div class="sw"><div class="chip" style="background:var(--terracotta);color:var(--terracotta-foreground)"><em>Aa</em></div><div class="meta"><b>Terracotta fill</b><code>--terracotta</code></div></div>
+        <div class="sw"><div class="chip" style="background:var(--terracotta-soft);color:var(--terracotta-ink)"><em>Aa</em></div><div class="meta"><b>Terracotta soft + ink</b><code>--terracotta-soft / -ink</code></div></div>
+        <div class="sw"><div class="chip" style="background:var(--gold);color:var(--gold-foreground)"><em>Aa</em></div><div class="meta"><b>Brass fill</b><code>--gold</code></div></div>
+        <div class="sw"><div class="chip" style="background:var(--gold-soft);color:var(--gold-ink)"><em>Aa</em></div><div class="meta"><b>Brass soft + ink</b><code>--gold-soft / -ink</code></div></div>
+      </div>
+
+      <div class="note"><b>Every hue ships as a pair — <code>fill</code> and <code>ink</code>.</b> The terracotta from the
+      reference (<code>#e4774a</code>) is beautiful but only reaches 2.4:1 against parchment, so it can never carry text.
+      <code>--terracotta</code> is therefore fill-only and always pairs with a navy label; <code>--terracotta-ink</code>
+      (<code>#b14019</code>) is the darkened version used whenever the colour has to be a word or an icon. Same rule for
+      brass. This is the single most important convention here — reach for <code>-ink</code> the moment the colour
+      becomes type.</div>
+
+      <div class="swatches">
+        <div class="sw"><div class="chip" style="background:var(--background);color:var(--foreground);border-bottom:1px solid var(--border)"><em>Aa</em></div><div class="meta"><b>Background</b><code>--background</code></div></div>
+        <div class="sw"><div class="chip" style="background:var(--card);color:var(--card-foreground);border-bottom:1px solid var(--border)"><em>Aa</em></div><div class="meta"><b>Card</b><code>--card</code></div></div>
+        <div class="sw"><div class="chip" style="background:var(--muted);color:var(--muted-foreground)"><em>Aa</em></div><div class="meta"><b>Muted</b><code>--muted</code></div></div>
+        <div class="sw"><div class="chip" style="background:var(--accent);color:var(--accent-foreground)"><em>Aa</em></div><div class="meta"><b>Accent (hover)</b><code>--accent</code></div></div>
+        <div class="sw"><div class="chip" style="background:var(--secondary);color:var(--secondary-foreground)"><em>Aa</em></div><div class="meta"><b>Secondary</b><code>--secondary</code></div></div>
+        <div class="sw"><div class="chip" style="background:var(--sidebar);color:var(--sidebar-foreground);border-bottom:1px solid var(--border)"><em>Aa</em></div><div class="meta"><b>Sidebar</b><code>--sidebar</code></div></div>
+      </div>
+
+      <div class="note"><b>Terracotta is not shadcn's <code>--accent</code>.</b> shadcn wires <code>--accent</code> to every
+      ghost-button, menu-item and table-row hover. Mapping terracotta there would flare the whole admin orange on
+      mouseover. <code>--accent</code> stays a quiet parchment tint; terracotta is spent on the primary CTA in dark
+      surfaces, the active step rail, and the "needs attention" marker — nowhere else.</div>
+
+      <div class="swatches">
+        <div class="sw"><div class="chip" style="background:var(--success-soft);color:var(--success)"><em>Aa</em></div><div class="meta"><b>Success</b><code>--success</code></div></div>
+        <div class="sw"><div class="chip" style="background:var(--warning-soft);color:var(--warning)"><em>Aa</em></div><div class="meta"><b>Warning</b><code>--warning</code></div></div>
+        <div class="sw"><div class="chip" style="background:var(--destructive-soft);color:var(--destructive)"><em>Aa</em></div><div class="meta"><b>Destructive</b><code>--destructive</code></div></div>
+        <div class="sw"><div class="chip" style="background:var(--info-soft);color:var(--info)"><em>Aa</em></div><div class="meta"><b>Info</b><code>--info</code></div></div>
+      </div>
+    </section>
+
+    <!-- 02 STATUS -->
+    <section id="status">
+      <div class="sechead"><h2>02 · Application statuses</h2><p>Eight values, frozen. Solid = badge text. Soft = badge fill.</p></div>
+      <div class="statuses">
+        <div class="strow"><span class="bar" style="background:var(--status-new)"></span><span class="txt"><b>New · جديد</b><code>new</code></span><span class="badge" style="background:var(--status-new-soft);color:var(--status-new)"><i class="pip"></i>New</span></div>
+        <div class="strow"><span class="bar" style="background:var(--status-incomplete)"></span><span class="txt"><b>Incomplete · غير مكتمل</b><code>incomplete</code></span><span class="badge" style="background:var(--status-incomplete-soft);color:var(--status-incomplete)"><i class="pip"></i>Incomplete</span></div>
+        <div class="strow"><span class="bar" style="background:var(--status-under-review)"></span><span class="txt"><b>Under review · قيد المراجعة</b><code>under_review</code></span><span class="badge" style="background:var(--status-under-review-soft);color:var(--status-under-review)"><i class="pip"></i>Under review</span></div>
+        <div class="strow"><span class="bar" style="background:var(--status-awaiting-interview)"></span><span class="txt"><b>Awaiting interview · بانتظار المقابلة</b><code>awaiting_interview</code></span><span class="badge" style="background:var(--status-awaiting-interview-soft);color:var(--status-awaiting-interview)"><i class="pip"></i>Interview</span></div>
+        <div class="strow"><span class="bar" style="background:var(--status-approved)"></span><span class="txt"><b>Approved · مقبول</b><code>approved</code></span><span class="badge" style="background:var(--status-approved-soft);color:var(--status-approved)"><i class="pip"></i>Approved</span></div>
+        <div class="strow"><span class="bar" style="background:var(--status-rejected)"></span><span class="txt"><b>Rejected · مرفوض</b><code>rejected</code></span><span class="badge" style="background:var(--status-rejected-soft);color:var(--status-rejected)"><i class="pip"></i>Rejected</span></div>
+        <div class="strow"><span class="bar" style="background:var(--status-disbursed)"></span><span class="txt"><b>Disbursed · تم الصرف</b><code>disbursed</code></span><span class="badge" style="background:var(--status-disbursed-soft);color:var(--status-disbursed)"><i class="pip"></i>Disbursed</span></div>
+        <div class="strow"><span class="bar" style="background:var(--status-follow-up)"></span><span class="txt"><b>Follow-up · المتابعة</b><code>follow_up</code></span><span class="badge" style="background:var(--status-follow-up-soft);color:var(--status-follow-up)"><i class="pip"></i>Follow-up</span></div>
+      </div>
+      <div class="note"><b>Colour is never the only signal.</b> Each badge carries a text label, and the row rail repeats
+      the state as position. For deuteranopia the risky pair is <code>approved</code> green vs <code>incomplete</code>
+      brass — they sit 86° apart in hue and 0.02 apart in lightness, so the label does the work. Never render a status
+      as a bare dot without its label.</div>
+    </section>
+
+    <!-- 03 TYPE -->
+    <section id="type">
+      <div class="sechead"><h2>03 · Typography</h2><p>Inter (Latin + all numerals) · IBM Plex Sans Arabic (RTL)</p></div>
+
+      <div class="card pad">
+        <div class="typerow"><span class="k"><b>Display</b><code>36 / 1.15 / 600</code></span><span style="font-size:36px;font-weight:600;letter-spacing:-.025em;line-height:1.15">Funding programs</span></div>
+        <div class="typerow"><span class="k"><b>Page title</b><code>28 / 1.2 / 600</code></span><span style="font-size:28px;font-weight:600;letter-spacing:-.02em">Application #A-2041</span></div>
+        <div class="typerow"><span class="k"><b>Section</b><code>20 / 1.3 / 600</code></span><span style="font-size:20px;font-weight:600;letter-spacing:-.015em">Screening result</span></div>
+        <div class="typerow"><span class="k"><b>Card title</b><code>16 / 1.4 / 600</code></span><span style="font-size:16px;font-weight:600">Applicant details</span></div>
+        <div class="typerow"><span class="k"><b>Body</b><code>15 / 1.6 / 400</code></span><span style="font-size:15px">Review the submitted documents before moving this application forward.</span></div>
+        <div class="typerow"><span class="k"><b>Body small</b><code>13.5 / 1.55 / 400</code></span><span style="font-size:13.5px">Used inside tables, form hints and list rows.</span></div>
+        <div class="typerow"><span class="k"><b>Label</b><code>12.5 / 1.4 / 500</code></span><span style="font-size:12.5px;font-weight:500">Commercial registration number</span></div>
+        <div class="typerow"><span class="k"><b>Overline</b><code>11 / .08em / 600</code></span><span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-foreground)">Stage 3 of 6</span></div>
+        <div class="typerow"><span class="k"><b>Numeric</b><code>tabular-nums</code></span><span class="num" style="font-size:20px;font-weight:600">1,250,000 SAR · 82.5% · 12/40</span></div>
+      </div>
+
+      <div class="specimen">
+        <div class="card pad spec-ar">
+          <span class="eyebrow">عربي — IBM Plex Sans Arabic</span>
+          <h3 style="font-size:22px;margin:8px 0 6px">منصة إدارة برامج التمويل</h3>
+          <p style="font-size:14.5px;color:var(--muted-foreground)">تمكّن المنصة رائدات الأعمال من تقديم طلبات التمويل ومتابعة حالتها خطوة بخطوة، من الفرز الآلي حتى صرف الدفعة الأولى.</p>
+          <p class="num" style="margin-top:10px;font-weight:600">مبلغ التمويل: 250,000 ريال</p>
+        </div>
+        <div class="card pad spec-en">
+          <span class="eyebrow">English — Inter</span>
+          <h3 style="font-size:22px;margin:8px 0 6px">SME Funding Management</h3>
+          <p style="font-size:14.5px;color:var(--muted-foreground)">The platform lets women entrepreneurs submit funding applications and track them step by step, from automated screening through to first disbursement.</p>
+          <p class="num" style="margin-top:10px;font-weight:600">Funding amount: SAR 250,000</p>
+        </div>
+      </div>
+      <div class="note">Arabic runs ~8% taller at the same px size. Use the same size tokens for both languages and let
+      line-height absorb it — do <b>not</b> branch font sizes per locale, or the two layouts drift apart. Minimum body
+      size is 13.5&nbsp;px; nothing below 11&nbsp;px carries meaning that isn't repeated elsewhere.</div>
+    </section>
+
+    <!-- 04 SPACE -->
+    <section id="space">
+      <div class="sechead"><h2>04 · Spacing, radius, elevation</h2><p>4&nbsp;px base — Tailwind's default ramp, restricted to these steps</p></div>
+
+      <div class="grid2">
+        <div class="card pad">
+          <h3 style="font-size:13px;margin-bottom:12px">Spacing steps</h3>
+          <div class="scale">
+            <div class="sline"><code>space-1</code><code>4px</code><span class="fill" style="width:4px"></span></div>
+            <div class="sline"><code>space-2</code><code>8px</code><span class="fill" style="width:8px"></span></div>
+            <div class="sline"><code>space-3</code><code>12px</code><span class="fill" style="width:12px"></span></div>
+            <div class="sline"><code>space-4</code><code>16px</code><span class="fill" style="width:16px"></span></div>
+            <div class="sline"><code>space-5</code><code>20px</code><span class="fill" style="width:20px"></span></div>
+            <div class="sline"><code>space-6</code><code>24px</code><span class="fill" style="width:24px"></span></div>
+            <div class="sline"><code>space-8</code><code>32px</code><span class="fill" style="width:32px"></span></div>
+            <div class="sline"><code>space-12</code><code>48px</code><span class="fill" style="width:48px"></span></div>
+            <div class="sline"><code>space-16</code><code>64px</code><span class="fill" style="width:64px"></span></div>
+          </div>
+        </div>
+        <div class="card pad">
+          <h3 style="font-size:13px;margin-bottom:12px">Where each step goes</h3>
+          <table>
+            <tbody>
+              <tr><td>Icon ↔ label</td><td class="num"><code>gap-2</code></td></tr>
+              <tr><td>Form field ↔ field</td><td class="num"><code>gap-4</code></td></tr>
+              <tr><td>Card padding</td><td class="num"><code>p-5</code> · <code>p-6</code> desktop</td></tr>
+              <tr><td>Grid gutter</td><td class="num"><code>gap-6</code></td></tr>
+              <tr><td>Section ↔ section</td><td class="num"><code>space-y-8</code></td></tr>
+              <tr><td>Page padding</td><td class="num"><code>p-6</code> · <code>p-8</code> desktop</td></tr>
+              <tr><td>Table cell</td><td class="num"><code>px-4 py-3</code></td></tr>
+              <tr><td>Min touch target</td><td class="num"><code>h-11</code> · 44px</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card pad">
+        <h3 style="font-size:13px;margin-bottom:14px">Radius — base <code>0.75rem</code></h3>
+        <div class="radii">
+          <div><i style="border-radius:calc(var(--radius)*.6)"></i><code>sm · 7px</code></div>
+          <div><i style="border-radius:calc(var(--radius)*.8)"></i><code>md · 10px</code></div>
+          <div><i style="border-radius:var(--radius)"></i><code>lg · 12px</code></div>
+          <div><i style="border-radius:calc(var(--radius)*1.4)"></i><code>xl · 17px</code></div>
+          <div><i style="border-radius:calc(var(--radius)*1.8)"></i><code>2xl · 21px</code></div>
+          <div><i style="border-radius:99px"></i><code>full · badge</code></div>
+        </div>
+      </div>
+
+      <div class="elev">
+        <div style="box-shadow:none"><b>flat</b><br><code>border only — table, inline panels</code></div>
+        <div style="box-shadow:var(--shadow-sm)"><b>shadow-sm</b><br><code>cards at rest</code></div>
+        <div style="box-shadow:var(--shadow-md)"><b>shadow-md</b><br><code>card hover, dropdown</code></div>
+        <div style="box-shadow:var(--shadow-lg)"><b>shadow-lg</b><br><code>dialog, sheet</code></div>
+      </div>
+    </section>
+
+    <!-- 05 COMPONENTS -->
+    <section id="components">
+      <div class="sechead"><h2>05 · Components</h2><p>Token behaviour under real UI — check both themes and both directions</p></div>
+
+      <div class="card pad" style="display:flex;flex-direction:column;gap:16px">
+        <h3 style="font-size:13px">Buttons</h3>
+        <div class="btnrow">
+          <button class="btn btn-primary" type="button">Submit application</button>
+          <button class="btn btn-terracotta" type="button">Continue draft</button>
+          <button class="btn btn-outline" type="button">Export CSV</button>
+          <button class="btn btn-ghost" type="button">Cancel</button>
+          <button class="btn btn-destructive" type="button">Reject</button>
+          <button class="btn btn-primary" type="button" disabled>Disabled</button>
+        </div>
+        <p style="font-size:12px;color:var(--muted-foreground)">One terracotta button per screen. If two actions compete for it, neither is the primary action.</p>
+      </div>
+
+      <div class="grid2">
+        <div class="card pad" style="display:flex;flex-direction:column;gap:14px">
+          <h3 style="font-size:13px">Form</h3>
+          <div class="field">
+            <label for="f1">Company name</label>
+            <input class="input" id="f1" type="text" placeholder="e.g. Rawan Trading Est." />
+            <span class="hint">As written on the commercial registration.</span>
+          </div>
+          <div class="field">
+            <label for="f2">Requested amount (SAR)</label>
+            <input class="input err num" id="f2" type="text" value="9,000,000" aria-invalid="true" aria-describedby="f2-err" />
+            <span class="err-txt" id="f2-err">Above this program's ceiling of SAR 2,000,000. Lower the amount to continue.</span>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span>Application completeness</span><b class="num">72%</b></div>
+            <div class="progress"><i style="width:72%"></i></div>
+          </div>
+        </div>
+
+        <div class="card pad">
+          <h3 style="font-size:13px;margin-bottom:12px">Navigation</h3>
+          <div class="sidebar-demo">
+            <span class="sitem active"><i></i>Dashboard</span>
+            <span class="sitem"><i></i>Applications</span>
+            <span class="sitem"><i></i>Interviews</span>
+            <span class="sitem"><i></i>Contracts</span>
+            <span class="sitem"><i></i>Disbursement</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card stat"><span class="lbl">Applications this cycle</span><span class="val">1,284</span><span class="trend up">▲ 12.4% vs. last cycle</span></div>
+        <div class="card stat"><span class="lbl">Approval rate</span><span class="val">38.2%</span><span class="trend down">▼ 2.1% vs. last cycle</span></div>
+        <div class="card stat" style="border-color:var(--gold);background:var(--gold-soft)"><span class="lbl" style="color:var(--gold-ink)">Total disbursed</span><span class="val" style="color:var(--gold-ink)">SAR 46.8M</span><span class="trend" style="color:var(--gold-ink)">▲ 8.0% vs. last cycle</span></div>
+      </div>
+
+      <div class="card">
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Applicant</th><th>Program</th><th>Amount</th><th>Score</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Rawan Trading Est.</td><td>Growth Track</td><td class="num">SAR 250,000</td><td class="num">84</td><td><span class="badge" style="margin:0;background:var(--status-under-review-soft);color:var(--status-under-review)"><i class="pip"></i>Under review</span></td></tr>
+              <tr><td>Noor Digital Studio</td><td>Seed Track</td><td class="num">SAR 80,000</td><td class="num">91</td><td><span class="badge" style="margin:0;background:var(--status-approved-soft);color:var(--status-approved)"><i class="pip"></i>Approved</span></td></tr>
+              <tr><td>Layan Food Co.</td><td>Growth Track</td><td class="num">SAR 1,000,000</td><td class="num">47</td><td><span class="badge" style="margin:0;background:var(--status-rejected-soft);color:var(--status-rejected)"><i class="pip"></i>Rejected</span></td></tr>
+              <tr><td>Sadeem Logistics</td><td>Expansion</td><td class="num">SAR 600,000</td><td class="num">76</td><td><span class="badge" style="margin:0;background:var(--status-disbursed-soft);color:var(--status-disbursed)"><i class="pip"></i>Disbursed</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card pad">
+          <h3 style="font-size:13px;margin-bottom:14px">Timeline</h3>
+          <div class="timeline">
+            <div class="tl"><span class="marker"><i style="background:var(--status-disbursed)"></i><s></s></span><span class="body"><b>First payment released</b><span>04 Aug 2026 · Finance</span></span></div>
+            <div class="tl"><span class="marker"><i style="background:var(--status-approved)"></i><s></s></span><span class="body"><b>Contract signed</b><span>28 Jul 2026 · Applicant</span></span></div>
+            <div class="tl"><span class="marker"><i style="background:var(--status-awaiting-interview)"></i><s></s></span><span class="body"><b>Interview completed</b><span>19 Jul 2026 · Committee</span></span></div>
+            <div class="tl"><span class="marker"><i style="background:var(--status-new)"></i><s></s></span><span class="body"><b>Application submitted</b><span>02 Jul 2026 · Applicant</span></span></div>
+          </div>
+        </div>
+        <div class="card pad" style="display:flex;flex-direction:column;gap:10px">
+          <h3 style="font-size:13px">Feedback</h3>
+          <div class="alert" style="border-color:var(--success);background:var(--success-soft);color:var(--success)"><i></i><span><span class="t">Application approved</span><br><span class="d">The applicant has been notified by SMS and email.</span></span></div>
+          <div class="alert" style="border-color:var(--warning);background:var(--warning-soft);color:var(--warning)"><i></i><span><span class="t">Two documents are missing</span><br><span class="d">Upload the CR copy and bank IBAN letter to continue.</span></span></div>
+          <div class="alert" style="border-color:var(--destructive);background:var(--destructive-soft);color:var(--destructive)"><i></i><span><span class="t">Disbursement failed</span><br><span class="d">The IBAN was rejected by the bank. Correct it and retry.</span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 CHARTS -->
+    <section id="charts">
+      <div class="sechead"><h2>06 · Chart palette</h2><p>Five series, hue-separated, legible on both grounds</p></div>
+      <div class="card pad">
+        <div class="chartdemo">
+          <div style="background:var(--chart-1);height:82%"></div>
+          <div style="background:var(--chart-2);height:64%"></div>
+          <div style="background:var(--chart-3);height:47%"></div>
+          <div style="background:var(--chart-4);height:71%"></div>
+          <div style="background:var(--chart-5);height:35%"></div>
+          <div style="background:var(--chart-1);height:93%"></div>
+          <div style="background:var(--chart-2);height:58%"></div>
+          <div style="background:var(--chart-3);height:40%"></div>
+        </div>
+        <div class="legend">
+          <span><em style="background:var(--chart-1)"></em>Submitted</span>
+          <span><em style="background:var(--chart-2)"></em>Screened</span>
+          <span><em style="background:var(--chart-3)"></em>Interviewed</span>
+          <span><em style="background:var(--chart-4)"></em>Approved</span>
+          <span><em style="background:var(--chart-5)"></em>Disbursed</span>
+        </div>
+      </div>
+      <div class="note">Series run navy → terracotta → brass → teal → violet: a lightness ramp as well as a hue ramp, so
+      the set survives greyscale printing and the common colour-vision deficiencies. Legends always carry text — never
+      rely on the swatch alone.</div>
+    </section>
+
+    <!-- 07 ACCESSIBILITY -->
+    <section id="a11y">
+      <div class="sechead"><h2>07 · Accessibility audit</h2><p>Computed live from the tokens — flip the theme and watch it re-run</p></div>
+      <div class="a11y-summary" id="a11y-summary"><span class="big" id="a11y-count">…</span><span id="a11y-verdict">Running…</span></div>
+      <div class="card">
+        <div class="tablewrap">
+          <table id="a11y-table">
+            <thead><tr><th>Pair</th><th>Sample</th><th>Ratio</th><th>Needs</th><th>Result</th></tr></thead>
+            <tbody id="a11y-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="note"><b>Thresholds:</b> 4.5:1 for body text (WCAG 2.2 AA 1.4.3), 3:1 for large text ≥24&nbsp;px and for
+      UI component boundaries and focus indicators (1.4.11). Beyond contrast, the rules baked into the components above:
+      focus is a 2&nbsp;px <code>--ring</code> outline with 2&nbsp;px offset on every interactive element; error state is
+      border&nbsp;+&nbsp;icon&nbsp;+&nbsp;text, never colour alone; minimum touch target 44&nbsp;px;
+      <code>prefers-reduced-motion</code> disables all transitions; and every status badge names its state in words.</div>
+    </section>
+
+    <!-- 08 TOKENS -->
+    <section id="tokens">
+      <div class="sechead"><h2>08 · Ship it</h2><p>Replace the <code>:root</code> / <code>.dark</code> blocks in <code>src/index.css</code></p></div>
+      <pre id="tokendump">Loading token dump…</pre>
+      <div class="note">Also add to <code>@theme inline</code>: <code>--color-terracotta</code>,
+      <code>--color-terracotta-ink</code>, <code>--color-terracotta-soft</code>, <code>--color-gold*</code>,
+      <code>--color-success</code>, <code>--color-warning</code>, <code>--color-info</code>, and the eight
+      <code>--color-status-*</code> pairs, so Tailwind emits <code>bg-terracotta</code> /
+      <code>text-status-approved</code>. Set <code>--radius: 0.75rem</code> (currently 0.625).</div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var tBtn = document.getElementById('t-theme');
+  var dBtn = document.getElementById('t-dir');
+
+  /* ---------- contrast engine: resolve a token to sRGB via canvas ---------- */
+  var cv = document.createElement('canvas');
+  cv.width = cv.height = 1;
+  var ctx = cv.getContext('2d', { willReadFrequently: true });
+
+  function rgbOf(token) {
+    var value = getComputedStyle(root).getPropertyValue(token).trim();
+    ctx.clearRect(0, 0, 1, 1);
+    ctx.fillStyle = '#000';
+    ctx.fillStyle = value;          // ignored if the browser can't parse it
+    ctx.fillRect(0, 0, 1, 1);
+    var d = ctx.getImageData(0, 0, 1, 1).data;
+    return [d[0], d[1], d[2]];
+  }
+
+  function luminance(rgb) {
+    var c = rgb.map(function (v) {
+      v /= 255;
+      return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  }
+
+  function contrast(fgToken, bgToken) {
+    var a = luminance(rgbOf(fgToken));
+    var b = luminance(rgbOf(bgToken));
+    return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+  }
+
+  var TEXT = 4.5, UI = 3;
+  var STATUSES = [
+    ['new', 'New'], ['incomplete', 'Incomplete'], ['under-review', 'Under review'],
+    ['awaiting-interview', 'Awaiting interview'], ['approved', 'Approved'],
+    ['rejected', 'Rejected'], ['disbursed', 'Disbursed'], ['follow-up', 'Follow-up']
+  ];
+
+  var PAIRS = [
+    ['Body text on page', '--foreground', '--background', TEXT, 'Aa'],
+    ['Body text on card', '--card-foreground', '--card', TEXT, 'Aa'],
+    ['Muted text on page', '--muted-foreground', '--background', TEXT, 'Aa'],
+    ['Muted text on card', '--muted-foreground', '--card', TEXT, 'Aa'],
+    ['Muted text on muted surface', '--muted-foreground', '--muted', TEXT, 'Aa'],
+    ['Primary button label', '--primary-foreground', '--primary', TEXT, 'Submit'],
+    ['Terracotta button label', '--terracotta-foreground', '--terracotta', TEXT, 'Continue'],
+    ['Terracotta button edge on page', '--terracotta-ink', '--background', UI, '▢'],
+    ['Primary hover label', '--primary-foreground', '--primary-hover', TEXT, 'Submit'],
+    ['Destructive button label', '--destructive-foreground', '--destructive', TEXT, 'Reject'],
+    ['Accent hover label', '--accent-foreground', '--accent', TEXT, 'Row'],
+    ['Secondary button label', '--secondary-foreground', '--secondary', TEXT, 'Back'],
+    ['Terracotta ink on page', '--terracotta-ink', '--background', TEXT, 'Link'],
+    ['Terracotta ink on its soft', '--terracotta-ink', '--terracotta-soft', TEXT, 'Draft'],
+    ['Brass button label', '--gold-foreground', '--gold', TEXT, 'Featured'],
+    ['Brass ink on page', '--gold-ink', '--background', TEXT, 'SAR 46.8M'],
+    ['Brass ink on its soft', '--gold-ink', '--gold-soft', TEXT, 'SAR 46.8M'],
+    ['Success text on its soft', '--success', '--success-soft', TEXT, 'Approved'],
+    ['Warning text on its soft', '--warning', '--warning-soft', TEXT, 'Missing'],
+    ['Destructive text on its soft', '--destructive', '--destructive-soft', TEXT, 'Failed'],
+    ['Info text on its soft', '--info', '--info-soft', TEXT, 'Note'],
+    ['Sidebar text on sidebar', '--sidebar-foreground', '--sidebar', TEXT, 'Applications'],
+    ['Active sidebar item', '--sidebar-primary-foreground', '--sidebar-primary', TEXT, 'Dashboard'],
+    ['Focus ring on page', '--ring', '--background', UI, '▢'],
+    ['Focus ring on card', '--ring', '--card', UI, '▢'],
+    ['Input border on card', '--input', '--card', UI, '▢'],
+    ['Input border on page', '--input', '--background', UI, '▢'],
+    ['Progress fill on its track', '--primary', '--muted', UI, '▮']
+  ].concat(STATUSES.map(function (s) {
+    return ['Badge: ' + s[1], '--status-' + s[0], '--status-' + s[0] + '-soft', TEXT, s[1]];
+  })).concat(STATUSES.map(function (s) {
+    return ['Timeline dot: ' + s[1] + ' (UI)', '--status-' + s[0], '--card', UI, '●'];
+  })).concat([1, 2, 3, 4, 5].map(function (n) {
+    return ['Chart series ' + n + ' on card (UI)', '--chart-' + n, '--card', UI, '▮'];
+  }));
+
+  function runAudit() {
+    var body = document.getElementById('a11y-body');
+    var fails = 0;
+    var html = '';
+    PAIRS.forEach(function (p) {
+      var label = p[0], fg = p[1], bg = p[2], min = p[3], sample = p[4];
+      var r = contrast(fg, bg);
+      var ok = r >= min - 0.005;
+      if (!ok) fails++;
+      html += '<tr>' +
+        '<td>' + label + '</td>' +
+        '<td><span class="pairprev" style="background:var(' + bg + ');color:var(' + fg + ')">' + sample + '</span></td>' +
+        '<td class="ratio">' + r.toFixed(2) + ':1</td>' +
+        '<td class="num">' + min.toFixed(1) + ':1</td>' +
+        '<td><span class="verdict ' + (ok ? 'pass' : 'fail') + '">' + (ok ? 'AA PASS' : 'FAIL') + '</span></td>' +
+        '</tr>';
+    });
+    body.innerHTML = html;
+
+    var summary = document.getElementById('a11y-summary');
+    var passed = PAIRS.length - fails;
+    document.getElementById('a11y-count').textContent = passed + '/' + PAIRS.length;
+    document.getElementById('a11y-verdict').textContent = fails === 0
+      ? 'pairs meet WCAG 2.2 AA in this theme.'
+      : fails + ' pair(s) below threshold — fix before shipping.';
+    summary.style.background = 'var(' + (fails === 0 ? '--success-soft' : '--destructive-soft') + ')';
+    summary.style.color = 'var(' + (fails === 0 ? '--success' : '--destructive') + ')';
+  }
+
+  /* ---------- toggles ---------- */
+  tBtn.addEventListener('click', function () {
+    var dark = root.classList.toggle('dark');
+    tBtn.textContent = dark ? 'Light' : 'Dark';
+    runAudit();
+  });
+
+  dBtn.addEventListener('click', function () {
+    var rtl = root.getAttribute('dir') !== 'rtl';
+    root.setAttribute('dir', rtl ? 'rtl' : 'ltr');
+    root.setAttribute('lang', rtl ? 'ar' : 'en');
+    dBtn.textContent = rtl ? 'English / LTR' : 'عربي / RTL';
+  });
+
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    root.classList.add('dark');
+    tBtn.textContent = 'Light';
+  }
+
+  runAudit();
+
+  /* ---------- token dump ---------- */
+  var out = [];
+  for (var s = 0; s < document.styleSheets.length; s++) {
+    var rules;
+    try { rules = document.styleSheets[s].cssRules; } catch (e) { continue; }
+    for (var r = 0; r < rules.length; r++) {
+      var sel = rules[r].selectorText;
+      if (sel === ':root' || sel === '.dark') {
+        out.push(sel + ' {\n  ' + rules[r].style.cssText.replace(/; /g, ';\n  ') + '\n}');
+      }
+    }
+  }
+  document.getElementById('tokendump').textContent = out.join('\n\n');
+})();
+</script>
+<style>
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important;}
+}
+</style>
+</body>
+</html>

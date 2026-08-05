@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Dialog as DialogPrimitive } from "radix-ui"
+import { useTranslation } from "react-i18next"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -55,6 +56,28 @@ function DialogContent({
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean
 }) {
+  const { t } = useTranslation()
+
+  /*
+    Radix's modal Content prevents the default focus restore and focuses its
+    own `triggerRef` instead. Almost every dialog in this app is *controlled* —
+    opened from a row menu, a table cell or page state, with no `DialogTrigger`
+    — so that ref is null and closing drops focus onto <body>, stranding a
+    keyboard user at the top of the document.
+
+    Remembering what was focused when the dialog opened and restoring it covers
+    the controlled case. If that element is gone (it was a menu item in a menu
+    that closed as the dialog opened) we stand aside and let Radix do whatever
+    it would have done.
+
+    Captured in `onOpenAutoFocus`, which Radix fires as the content opens and
+    *before* it moves focus inside — so the active element is still whatever
+    opened the dialog. Neither a render-time read nor an effect works here:
+    this component stays mounted while the dialog is closed (only the portal
+    unmounts), so both would capture the state at page load instead.
+  */
+  const restoreRef = React.useRef<HTMLElement | null>(null)
+
   return (
     <DialogPortal>
       <DialogOverlay />
@@ -65,6 +88,21 @@ function DialogContent({
           className
         )}
         {...props}
+        // After {...props} so a caller's handler composes with these rather than
+        // silently replacing them — a caller that calls preventDefault still wins.
+        onOpenAutoFocus={(event) => {
+          props.onOpenAutoFocus?.(event)
+          restoreRef.current = document.activeElement as HTMLElement | null
+        }}
+        onCloseAutoFocus={(event) => {
+          props.onCloseAutoFocus?.(event)
+          if (event.defaultPrevented) return
+          const target = restoreRef.current
+          if (target && target.isConnected && typeof target.focus === 'function') {
+            event.preventDefault()
+            target.focus()
+          }
+        }}
       >
         {children}
         {showCloseButton && (
@@ -76,7 +114,7 @@ function DialogContent({
             >
               <XIcon
               />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">{t("common.close")}</span>
             </Button>
           </DialogPrimitive.Close>
         )}
@@ -103,6 +141,7 @@ function DialogFooter({
 }: React.ComponentProps<"div"> & {
   showCloseButton?: boolean
 }) {
+  const { t } = useTranslation()
   return (
     <div
       data-slot="dialog-footer"
@@ -115,7 +154,7 @@ function DialogFooter({
       {children}
       {showCloseButton && (
         <DialogPrimitive.Close asChild>
-          <Button variant="outline">Close</Button>
+          <Button variant="outline">{t("common.close")}</Button>
         </DialogPrimitive.Close>
       )}
     </div>

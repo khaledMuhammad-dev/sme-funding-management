@@ -3,6 +3,17 @@ import { Switch as SwitchPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Toggle switch.
+ *
+ * `dir="ltr"` is set deliberately: the off→on metaphor is physical (a light
+ * switch), not textual, so the thumb always travels left→right regardless of
+ * document direction. This also makes the geometry single-source — the thumb
+ * starts at the inline-start edge and moves by its own width, with no `rtl:`
+ * counter-variants that can double up and push it outside the track.
+ *
+ * Only the control is LTR; the label beside it still follows the document.
+ */
 function Switch({
   className,
   size = "default",
@@ -19,10 +30,12 @@ function Switch({
         className
       )}
       {...props}
+      // After the spread on purpose: the control is always LTR, never per-call.
+      dir="ltr"
     >
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
-        className="pointer-events-none block rounded-full bg-background ring-0 transition-transform group-data-[size=default]/switch:size-4 group-data-[size=sm]/switch:size-3 group-data-[size=default]/switch:data-checked:translate-x-[calc(100%-2px)] rtl:group-data-[size=default]/switch:data-checked:-translate-x-[calc(100%-2px)] group-data-[size=sm]/switch:data-checked:translate-x-[calc(100%-2px)] rtl:group-data-[size=sm]/switch:data-checked:-translate-x-[calc(100%-2px)] dark:data-checked:bg-primary-foreground group-data-[size=default]/switch:data-unchecked:translate-x-0 rtl:group-data-[size=default]/switch:data-unchecked:-translate-x-0 group-data-[size=sm]/switch:data-unchecked:translate-x-0 rtl:group-data-[size=sm]/switch:data-unchecked:-translate-x-0 dark:data-unchecked:bg-foreground"
+        className="pointer-events-none block rounded-full bg-background ring-0 transition-transform group-data-[size=default]/switch:size-4 group-data-[size=sm]/switch:size-3 group-data-[size=default]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=sm]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=default]/switch:data-unchecked:translate-x-0 group-data-[size=sm]/switch:data-unchecked:translate-x-0 dark:data-checked:bg-primary-foreground dark:data-unchecked:bg-foreground"
       />
     </SwitchPrimitive.Root>
   )

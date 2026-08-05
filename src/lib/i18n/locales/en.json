@@ -1,0 +1,852 @@
+{
+  "common": {
+    "appName": "Women Entrepreneurs Funding Platform",
+    "appShort": "Funding Platform",
+    "search": "Search",
+    "searchPlaceholder": "Search by name or reference…",
+    "filter": "Filter",
+    "filters": "Filters",
+    "clear": "Clear",
+    "clearAll": "Clear all",
+    "apply": "Apply",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "next": "Next",
+    "back": "Back",
+    "submit": "Submit",
+    "close": "Close",
+    "edit": "Edit",
+    "view": "View",
+    "delete": "Delete",
+    "download": "Download",
+    "print": "Print",
+    "export": "Export",
+    "exportCsv": "Export CSV",
+    "actions": "Actions",
+    "openMenu": "Open menu",
+    "details": "Details",
+    "loading": "Loading…",
+    "noResults": "No results",
+    "noResultsHint": "Try adjusting your filters or search term.",
+    "error": "Something went wrong",
+    "errorHint": "We couldn't load this data. Try again.",
+    "retry": "Retry",
+    "required": "Required",
+    "optional": "Optional",
+    "yes": "Yes",
+    "no": "No",
+    "all": "All",
+    "none": "None",
+    "of": "of",
+    "sar": "SAR",
+    "date": "Date",
+    "time": "Time",
+    "status": "Status",
+    "reason": "Reason",
+    "notes": "Notes",
+    "reference": "Reference",
+    "amount": "Amount",
+    "region": "Region",
+    "sector": "Sector",
+    "language": "Language",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "toggleTheme": "Toggle theme",
+    "toggleLanguage": "Toggle language",
+    "backToList": "Back to list",
+    "copy": "Copy",
+    "copied": "Copied",
+    "days": "days",
+    "today": "Today",
+    "upcoming": "Upcoming",
+    "overdue": "Overdue",
+    "since": "since",
+    "assignee": "Assignee",
+    "unassigned": "Unassigned",
+    "beneficiary": "Applicant",
+    "project": "Project",
+    "phone": "Phone",
+    "email": "Email",
+    "nationalId": "National ID",
+    "iban": "IBAN",
+    "city": "City",
+    "createdAt": "Submitted",
+    "updatedAt": "Last updated",
+    "skipToContent": "Skip to main content"
+  },
+  "nav": {
+    "home": "Home",
+    "apply": "Apply",
+    "track": "Track application",
+    "adminArea": "Admin",
+    "myApplications": "My applications",
+    "myContracts": "My contracts",
+    "account": "My account",
+    "signedInAs": "Signed in as {{name}}",
+    "portal": "Applicant portal",
+    "dashboard": "Dashboard",
+    "applications": "Applications",
+    "interviews": "Interviews",
+    "contracts": "Contracts",
+    "disbursements": "Disbursement",
+    "followUp": "Follow-up",
+    "reports": "Reports",
+    "settings": "Settings",
+    "notifications": "Notifications",
+    "sections": {
+      "workflow": "Workflow",
+      "finance": "Finance",
+      "insights": "Insights"
+    },
+    "openMenu": "Open navigation menu",
+    "toggleSidebar": "Collapse or expand the sidebar"
+  },
+  "status": {
+    "new": "New",
+    "incomplete": "Incomplete",
+    "under_review": "Under review",
+    "awaiting_interview": "Awaiting interview",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "disbursed": "Disbursed",
+    "follow_up": "Follow-up"
+  },
+  "statusHint": {
+    "new": "Received and waiting for initial screening.",
+    "incomplete": "Waiting for the applicant to supply missing documents.",
+    "under_review": "The committee is assessing and scoring the application.",
+    "awaiting_interview": "An interview has been scheduled.",
+    "approved": "Funding approved — the contract is being prepared.",
+    "rejected": "The application did not meet the programme criteria.",
+    "disbursed": "The funding has been transferred to the bank account.",
+    "follow_up": "The project is in periodic monitoring."
+  },
+  "region": {
+    "riyadh": "Riyadh",
+    "jeddah": "Jeddah",
+    "dammam": "Dammam",
+    "abha": "Abha",
+    "madinah": "Madinah",
+    "qassim": "Qassim",
+    "tabuk": "Tabuk"
+  },
+  "sector": {
+    "food": "Food",
+    "fashion": "Fashion",
+    "beauty": "Beauty",
+    "crafts": "Crafts",
+    "retail": "Retail",
+    "services": "Services",
+    "tech": "Technology"
+  },
+  "docKind": {
+    "national_id": "National ID copy",
+    "iban_cert": "IBAN certificate",
+    "commercial_register": "Commercial register",
+    "feasibility_study": "Feasibility study",
+    "photos": "Project photos"
+  },
+  "table": {
+    "rowsSelected": "{{count}} of {{total}} selected",
+    "selectAll": "Select all",
+    "selectRow": "Select row",
+    "rowsPerPage": "Rows per page",
+    "page": "Page {{page}} of {{total}}",
+    "first": "First page",
+    "previous": "Previous",
+    "next": "Next",
+    "last": "Last page",
+    "columns": "Columns",
+    "toggleColumns": "Toggle columns",
+    "sortAsc": "Ascending",
+    "sortDesc": "Descending",
+    "clearSort": "Clear sort",
+    "bulkActions": "Bulk actions",
+    "clearSelection": "Clear selection",
+    "showing": "Showing {{from}}–{{to}} of {{total}}",
+    "density": "Density",
+    "densityComfortable": "Comfortable",
+    "densityCompact": "Compact"
+  },
+  "landing": {
+    "eyebrow": "Women Entrepreneurs Funding Programme",
+    "title": "Funding that starts with your idea and ends with a running business",
+    "subtitle": "Apply online and follow every stage as it happens — from automated screening through to the first disbursement.",
+    "ctaApply": "Start your application",
+    "ctaTrack": "Track your application",
+    "stepsTitle": "The journey",
+    "stepsSubtitle": "Six clear stages, nothing hidden.",
+    "eligibilityTitle": "Who can apply",
+    "eligibilitySubtitle": "Check the criteria before you start to save time.",
+    "statsTitle": "Programme impact",
+    "steps": {
+      "submit": {
+        "title": "Submit",
+        "desc": "Fill in your details and attach documents in five steps."
+      },
+      "screen": {
+        "title": "Automated screening",
+        "desc": "Instant completeness and eligibility check against published criteria."
+      },
+      "review": {
+        "title": "Assessment",
+        "desc": "The committee reviews your file and awards a weighted score."
+      },
+      "interview": {
+        "title": "Interview",
+        "desc": "A short remote interview to discuss your business plan."
+      },
+      "contract": {
+        "title": "Contract & signature",
+        "desc": "A digital contract signed electronically — no office visit."
+      },
+      "disburse": {
+        "title": "Disbursement & follow-up",
+        "desc": "Funds transferred, then periodic monitoring of your project."
+      }
+    },
+    "eligibility": {
+      "saudi": {
+        "title": "Saudi national",
+        "desc": "A valid national ID."
+      },
+      "age": {
+        "title": "21 years or older",
+        "desc": "Full legal capacity to contract."
+      },
+      "project": {
+        "title": "A running project or ready idea",
+        "desc": "A clear, executable business plan."
+      },
+      "docs": {
+        "title": "Complete documents",
+        "desc": "ID, IBAN certificate and feasibility study."
+      }
+    },
+    "stats": {
+      "beneficiaries": "Beneficiaries",
+      "disbursed": "Total disbursed",
+      "projects": "Running projects",
+      "avgDays": "Average processing time"
+    }
+  },
+  "apply": {
+    "title": "New funding application",
+    "subtitle": "Five steps — you can go back to any step before submitting.",
+    "draftSaved": "Draft saved automatically",
+    "steps": {
+      "personal": "Personal details",
+      "project": "Project details",
+      "documents": "Documents",
+      "terms": "Terms & conditions",
+      "review": "Review & submit"
+    },
+    "personal": {
+      "fullName": "Full name",
+      "nationalId": "National ID number",
+      "phone": "Mobile number",
+      "email": "Email address",
+      "region": "Region",
+      "city": "City",
+      "iban": "IBAN",
+      "hasCr": "I have a commercial register",
+      "crNo": "Commercial register number"
+    },
+    "project": {
+      "name": "Project name",
+      "sector": "Sector",
+      "description": "Project description",
+      "descriptionHint": "Describe your idea, products and growth plan in at least 50 words.",
+      "requestedAmount": "Requested amount",
+      "monthlyIncome": "Current monthly income",
+      "experienceYears": "Years of experience"
+    },
+    "documents": {
+      "title": "Attach the required documents",
+      "hint": "Accepted formats: PDF, JPG, PNG — 5 MB per file.",
+      "upload": "Upload file",
+      "replace": "Replace",
+      "remove": "Remove",
+      "uploaded": "Uploaded",
+      "dropHere": "Drop the file here or click to browse",
+      "tooLarge": "{{name}} is larger than {{max}} MB"
+    },
+    "terms": {
+      "title": "Terms & conditions",
+      "scrollHint": "Read the terms to the end to enable acceptance.",
+      "accept": "I confirm I have read and electronically accept the terms and conditions.",
+      "mustScroll": "Finish reading the terms first"
+    },
+    "review": {
+      "title": "Review your details before submitting",
+      "hint": "Check everything carefully — you cannot edit after submitting.",
+      "editSection": "Edit this section",
+      "submit": "Submit application"
+    },
+    "success": {
+      "title": "Your application has been received",
+      "subtitle": "Keep your reference number to check the status at any time.",
+      "trackNow": "Track it now",
+      "newApplication": "New application"
+    }
+  },
+  "track": {
+    "title": "Track your application",
+    "subtitle": "Enter your reference number to see the current status and full history.",
+    "refLabel": "Reference number",
+    "refPlaceholder": "APP-2026-0001",
+    "refTooShort": "Enter at least 4 characters of your reference number",
+    "lookup": "Look up",
+    "notFound": "No application found with that reference",
+    "notFoundHint": "Check the number exactly as it appeared in your confirmation message.",
+    "currentStatus": "Current status",
+    "journey": "Your journey",
+    "history": "Stage history",
+    "missingDocs": "Documents needed",
+    "missingDocsHint": "Attach the documents below to complete your application.",
+    "reupload": "Re-upload",
+    "interviewInfo": "Interview details",
+    "interviewAt": "Interview time",
+    "interviewWith": "Interviewer",
+    "joinMeeting": "Join the meeting",
+    "myNotifications": "My messages",
+    "myNotificationsHint": "Every message we sent you about this application.",
+    "noNotifications": "No messages have been sent for this application yet.",
+    "applicationDetails": "Application details",
+    "submittedAt": "Submitted on",
+    "tryDemo": "Try one of the demo references",
+    "contract": "Your contract",
+    "contractHint": "Your funding agreement, as sent to you. Open it to read, print or save it as a PDF.",
+    "viewContract": "View contract",
+    "seeMyApplications": "See all my applications"
+  },
+  "myApplications": {
+    "title": "My applications",
+    "subtitle": "All your funding applications, whether you submitted them or looked them up.",
+    "open": "Open application",
+    "unavailable": "No longer available",
+    "unavailableHint": "This application is not available right now — the demo data was reset.",
+    "emptyTitle": "You have no applications yet",
+    "emptyHint": "Submit an application or look up a reference number, and it will be listed here.",
+    "emptyTrackCta": "Track an application",
+    "emptyApplyCta": "Start a new application"
+  },
+  "myContracts": {
+    "title": "My contracts",
+    "subtitle": "Every contract issued for your funding applications.",
+    "tabs": {
+      "awaiting": "Awaiting signature",
+      "signed": "Signed",
+      "all": "All"
+    },
+    "view": "View contract",
+    "emptyTitle": "You have no contracts yet",
+    "emptyHint": "A contract is drawn up once one of your applications is approved.",
+    "emptyAwaitingTitle": "Nothing awaiting your signature",
+    "emptyAwaitingHint": "Every contract sent to you has already been signed.",
+    "emptySignedTitle": "You have not signed a contract yet",
+    "emptySignedHint": "Contracts you sign appear here.",
+    "emptyApplicationsCta": "See my applications",
+    "emptyApplyCta": "Start a new application"
+  },
+  "applications": {
+    "title": "Applications",
+    "subtitle": "Manage and track every funding application.",
+    "count_one": "1 application",
+    "count_other": "{{count}} applications",
+    "columns": {
+      "ref": "Reference",
+      "beneficiary": "Applicant",
+      "project": "Project",
+      "region": "Region",
+      "sector": "Sector",
+      "amount": "Amount",
+      "score": "Score",
+      "status": "Status",
+      "assignee": "Assignee",
+      "createdAt": "Submitted",
+      "updatedAt": "Updated"
+    },
+    "bulk": {
+      "moveToReview": "Move to review",
+      "done_one": "1 application updated",
+      "done_other": "{{count}} applications updated",
+      "assign": "Assign to",
+      "export": "Export selected"
+    },
+    "detail": {
+      "title": "Application detail",
+      "tabs": {
+        "data": "Details",
+        "documents": "Documents",
+        "score": "Score",
+        "interview": "Interview",
+        "contract": "Contract",
+        "disbursement": "Disbursement",
+        "followUps": "Follow-up",
+        "timeline": "History"
+      },
+      "changeStatus": "Change status",
+      "personalData": "Personal details",
+      "projectData": "Project details",
+      "noInterview": "No interview scheduled yet",
+      "noContract": "No contract created yet",
+      "noDisbursement": "No payment order",
+      "noFollowUps": "No follow-up reports"
+    },
+    "assign": {
+      "action": "Assign",
+      "title": "Assign the application",
+      "description": "The case officer you pick becomes responsible for reviewing this application.",
+      "confirm": "Confirm assignment",
+      "success": "Assigned to {{name}}"
+    },
+    "transition": {
+      "title": "Change application status",
+      "description": "This change is recorded in the application history and the applicant is notified.",
+      "from": "From",
+      "to": "To",
+      "reasonLabel": "Reason for the change",
+      "reasonPlaceholder": "Write a clear reason the applicant will see…",
+      "reasonRequired": "A reason is required for this action",
+      "noTransitions": "No actions available from this status",
+      "success": "Application status updated",
+      "confirm": "Confirm change"
+    },
+    "documents": {
+      "title": "Attached documents",
+      "preview": "Preview",
+      "markMissing": "Flag as missing",
+      "unmarkMissing": "Remove missing flag",
+      "missing": "Missing",
+      "requestDocs": "Request missing documents",
+      "requestDocsHint": "The application moves to “Incomplete” and the applicant is notified.",
+      "size": "Size",
+      "uploadedAt": "Uploaded",
+      "previewUnavailable": "This is a demo preview — the original file is not stored.",
+      "missingReason": "Missing document: {{doc}}",
+      "markedMissing": "Document flagged as missing",
+      "unmarkedMissing": "Missing flag removed",
+      "empty": "No documents attached to this application"
+    }
+  },
+  "scoring": {
+    "title": "Automated scoring",
+    "subtitle": "A weighted score against configurable criteria.",
+    "totalScore": "Total score",
+    "verdict": "Verdict",
+    "verdicts": {
+      "eligible": "Eligible",
+      "manual_review": "Needs manual review",
+      "ineligible": "Not eligible"
+    },
+    "criteria": "Criteria",
+    "weight": "Weight",
+    "value": "Value",
+    "weighted": "Weighted",
+    "recalculate": "Recalculate",
+    "recalculated": "Score updated",
+    "notScored": "Not scored yet",
+    "notScoredHint": "Scoring starts automatically once the application moves to review.",
+    "completeness": "Completeness",
+    "eligibilityChecks": "Eligibility checks",
+    "checks": {
+      "docsComplete": "All documents uploaded",
+      "termsAccepted": "Terms accepted",
+      "amountWithinCap": "Amount within programme cap",
+      "hasIban": "IBAN on file",
+      "incomeDeclared": "Monthly income declared"
+    },
+    "criterion": {
+      "income_stability": "Income stability",
+      "project_experience": "Project experience",
+      "seriousness": "Applicant seriousness",
+      "repayment_ability": "Repayment ability",
+      "data_completeness": "Data completeness"
+    }
+  },
+  "interviews": {
+    "title": "Interviews",
+    "subtitle": "Schedule and manage applicant interviews.",
+    "schedule": "Schedule",
+    "reschedule": "Reschedule",
+    "openMeeting": "Open meeting",
+    "listView": "List",
+    "weekView": "Week",
+    "interviewer": "Interviewer",
+    "scheduledAt": "Scheduled",
+    "duration": "Duration",
+    "minutes": "min",
+    "meetingLink": "Meeting link",
+    "statuses": {
+      "scheduled": "Scheduled",
+      "done": "Completed",
+      "no_show": "No show"
+    },
+    "dialog": {
+      "title": "Schedule an interview",
+      "description": "Pick a date, slot and interviewer — the applicant is notified automatically.",
+      "date": "Date",
+      "slot": "Time",
+      "interviewer": "Interviewer",
+      "confirm": "Confirm slot",
+      "slotTaken": "This interviewer is already booked at that time.",
+      "success": "Interview scheduled"
+    },
+    "notes": {
+      "title": "Interview notes",
+      "description": "Record your impression and recommendation after the interview.",
+      "verdict": "Recommendation",
+      "verdicts": {
+        "recommend": "Recommend",
+        "conditional": "Conditional",
+        "not_recommend": "Do not recommend"
+      },
+      "placeholder": "Notes on the business plan and the applicant's readiness…",
+      "markDone": "Mark completed",
+      "markNoShow": "Mark no-show",
+      "saved": "Notes saved"
+    },
+    "empty": "No interviews scheduled",
+    "emptyHint": "Interviews appear here as soon as they are scheduled from an application."
+  },
+  "contracts": {
+    "title": "Contracts",
+    "subtitle": "Generate contracts and sign them electronically.",
+    "contractNo": "Contract no.",
+    "installments": "Instalments",
+    "statuses": {
+      "draft": "Draft",
+      "sent": "Sent",
+      "signed": "Signed"
+    },
+    "generate": "Generate contract",
+    "exportPdf": "Export PDF",
+    "sentSuccess": "Contract sent for signature",
+    "generateDialog": {
+      "title": "Generate a contract",
+      "description": "Pick an approved application; the contract is drawn up from the standard template.",
+      "empty": "Every approved application already has a contract. Approve another application to draw up a new one.",
+      "noApproved": "No approved applications yet — a contract can only be drawn up for an approved file.",
+      "noResults": "No approved application matches \"{{query}}\".",
+      "searchLabel": "Search approved applications",
+      "searchPlaceholder": "Reference, applicant or project",
+      "alreadyIssued": "Contract already issued · {{contractNo}}",
+      "signatory": "Issued under the programme signature of {{name}}.",
+      "success": "Contract generated"
+    },
+    "awaitingApplicant": "Awaiting applicant signature",
+    "awaitingApplicantHint": "Sent to the applicant — they sign it from their portal.",
+    "notSentYet": "Not sent yet",
+    "noSignatoryTitle": "No authorised signatory configured",
+    "noSignatoryBody": "Contracts are issued under the programme's own signature. Add an authorised signatory before generating one.",
+    "openSignatorySettings": "Open settings",
+    "preview": "Preview contract",
+    "send": "Send for signature",
+    "sign": "Sign contract",
+    "signed": "Contract signed",
+    "archive": "Archive",
+    "showArchived": "Show signed",
+    "sentAt": "Sent",
+    "signedAt": "Signed",
+    "doc": {
+      "heading": "Project Funding Agreement",
+      "party1": "First party",
+      "party1Name": "Women Entrepreneurs Funding Programme",
+      "party2": "Second party",
+      "preamble": "Whereas the first party provides funding to support small enterprises, and the second party wishes to obtain such funding, both parties have agreed as follows:",
+      "clause1": "The first party shall disburse the amount stated above to the second party's account within ten working days of signature.",
+      "clause2": "The second party shall use the funding exclusively for the stated project and submit performance reports every three months.",
+      "clause3": "The first party may suspend disbursement or demand repayment if the funding is used for other purposes.",
+      "clause4": "This agreement is governed by the laws of the Kingdom of Saudi Arabia, and the competent courts shall settle any dispute.",
+      "signature1": "First party signature",
+      "signature2": "Second party signature",
+      "awaitingSignature": "Awaiting signature",
+      "orgSignatureAlt": "Signature of the funding programme",
+      "beneficiarySignatureAlt": "Signature of the beneficiary",
+      "amountInWords": "Amount in words"
+    },
+    "signing": {
+      "title": "Electronic signature",
+      "description": "Type your full name, then enter the verification code sent to your phone.",
+      "nameLabel": "Full name as on your ID",
+      "otpLabel": "Verification code",
+      "padLabel": "Draw your signature",
+      "padHint": "Sign inside the box with your mouse or finger",
+      "clearPad": "Clear signature",
+      "useTypedName": "Use typed name",
+      "padKeyboardHint": "Not using a mouse? Enter your full name above, then choose \"Use typed name\".",
+      "otpHint": "Demo code: {{code}}",
+      "otpWrong": "That verification code is not correct",
+      "confirm": "Sign and confirm",
+      "beneficiaryDescription": "Read your contract, sign it, then enter the verification code sent to your phone.",
+      "orgAlreadySigned": "Already signed by the funding programme — {{name}}",
+      "orgSignaturePending": "The funding programme's signature is not on this contract yet.",
+      "alreadySigned": "You have already signed this contract.",
+      "signNow": "Sign contract",
+      "success": "Contract signed successfully"
+    },
+    "empty": "No contracts",
+    "emptyHint": "Contracts are generated automatically once an application is approved."
+  },
+  "disbursement": {
+    "title": "Disbursement",
+    "subtitle": "Issue payment orders and track their execution.",
+    "orderNo": "Order no.",
+    "bank": "Bank",
+    "statuses": {
+      "pending": "Awaiting order",
+      "ordered": "Order issued",
+      "paid": "Paid"
+    },
+    "issueOrder": "Issue payment order",
+    "issueBulk": "Issue orders for selected",
+    "markPaid": "Confirm payment",
+    "orderedAt": "Ordered",
+    "paidAt": "Paid",
+    "kpi": {
+      "pending": "Awaiting order",
+      "ordered": "Orders issued",
+      "paidThisMonth": "Paid this month",
+      "total": "Total disbursed"
+    },
+    "dialog": {
+      "title": "Issue a payment order",
+      "description": "A payment order is created in the applicant's name to the registered account.",
+      "confirm": "Issue order",
+      "success": "Payment order issued",
+      "approver": "Authorised by",
+      "selectedCount": "Selected orders",
+      "paidDescription": "Confirm that the funds have left the programme account.",
+      "paidEffect": "The application moves to disbursed and the first follow-up report is scheduled.",
+      "paidSuccess": "Payment confirmed and the applicant notified"
+    },
+    "empty": "No disbursements",
+    "emptyHint": "Applications appear here once their contract is signed."
+  },
+  "followUp": {
+    "title": "Project monitoring",
+    "subtitle": "Track how funded projects are performing after disbursement.",
+    "health": {
+      "on_track": "On track",
+      "at_risk": "At risk",
+      "defaulted": "Defaulted"
+    },
+    "period": "Period",
+    "dueDate": "Due",
+    "submittedAt": "Submitted",
+    "revenue": "Revenue",
+    "employees": "Employees",
+    "growth": "Growth",
+    "photos": "Project photos",
+    "sendReminder": "Send reminder",
+    "reminderSent": "Reminder sent",
+    "openForm": "Open beneficiary form",
+    "markDefaulted": "Mark as defaulted",
+    "markDefaultedHint": "The project is moved into defaulted monitoring and the applicant's file is updated. Record why.",
+    "markedDefaulted": "Project marked as defaulted",
+    "projectDetail": "Project detail",
+    "impact": "Project impact",
+    "impactChart": "Revenue since disbursement",
+    "reportHistory": "Report history",
+    "noPhotos": "No photos uploaded yet",
+    "timeline": {
+      "healthChanged": "Project health set to {{health}}"
+    },
+    "form": {
+      "title": "Periodic follow-up report",
+      "subtitle": "Help us measure the impact of your funding by completing this report.",
+      "revenueLabel": "Revenue this period (SAR)",
+      "employeesLabel": "Current number of employees",
+      "growthLabel": "Estimated growth (%)",
+      "notesLabel": "Key challenges and achievements",
+      "photosLabel": "Photos from the project",
+      "photosAdd": "Add photos",
+      "photosHint": "JPG or PNG — up to {{max}} photos, {{size}} MB each. You can also drag them here.",
+      "photoCount": "{{used}} / {{max}}",
+      "removePhoto": "Remove photo {{name}}",
+      "photoInvalid": "{{name}} is not an image file",
+      "photoTooLarge": "{{name}} is larger than {{max}} MB",
+      "photoLimit": "You can attach up to {{max}} photos",
+      "submit": "Submit report",
+      "wholeNumber": "Enter a whole number",
+      "success": "Thank you — your report has been received"
+    },
+    "empty": "No projects in monitoring",
+    "emptyHint": "Projects enter monitoring after their funding is disbursed."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "A complete view of programme performance.",
+    "kpi": {
+      "total": "Total applications",
+      "approvalRate": "Acceptance rate",
+      "rejectionRate": "Rejection rate",
+      "disbursedAmount": "Total disbursed",
+      "avgProcessingDays": "Avg. processing time",
+      "strugglingProjects": "Struggling projects",
+      "avgScore": "Average score",
+      "activeProjects": "Active projects"
+    },
+    "charts": {
+      "statusDonut": "Applications by status",
+      "timeline": "Applications over time",
+      "regions": "Applications by region",
+      "disbursementByMonth": "Monthly disbursement",
+      "impact": "Impact of funded projects",
+      "empty": "No data to chart yet"
+    },
+    "staff": {
+      "title": "Team performance",
+      "name": "Staff member",
+      "handled": "Assigned",
+      "approved": "Approved",
+      "avgDays": "Avg. days",
+      "empty": "No applications assigned yet"
+    },
+    "activity": {
+      "title": "Recent activity",
+      "empty": "No activity yet"
+    }
+  },
+  "reports": {
+    "title": "Reports",
+    "subtitle": "Ready-made reports you can export or print.",
+    "tabs": {
+      "applications": "Applications",
+      "financial": "Financial",
+      "impact": "Impact",
+      "geographic": "Geographic",
+      "performance": "Performance"
+    },
+    "beneficiaries": "Beneficiaries",
+    "decisionDays": "Days to decision",
+    "dateFrom": "From",
+    "dateTo": "To",
+    "generatedAt": "Generated at",
+    "rows": "Records",
+    "empty": "No data in the selected range"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "Every message sent to applicants.",
+    "markAllRead": "Mark all as read",
+    "unread": "Unread",
+    "channels": {
+      "sms": "SMS",
+      "whatsapp": "WhatsApp",
+      "email": "Email"
+    },
+    "triggers": {
+      "received": "Application received",
+      "incomplete": "Documents requested",
+      "interview_scheduled": "Interview scheduled",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "contract_signed": "Contract signed",
+      "disbursed": "Disbursed",
+      "follow_up_due": "Follow-up due"
+    },
+    "preview": {
+      "title": "Message preview",
+      "description": "This is how the message reaches the applicant's phone.",
+      "now": "now"
+    },
+    "empty": "No notifications",
+    "emptyHint": "Notifications are sent automatically on every status change.",
+    "sent": "Notification sent",
+    "simulated": "Simulated delivery",
+    "portal": {
+      "title": "Your messages",
+      "open": "Open my application",
+      "emptyTitle": "No messages yet",
+      "emptyHint": "Once you submit an application, updates sent to you by SMS, WhatsApp or email appear here.",
+      "trackCta": "Track an application",
+      "acrossApplications": "Across {{count}} applications"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Customise scoring criteria and notification channels.",
+    "tabs": {
+      "scoring": "Scoring criteria",
+      "notifications": "Notifications",
+      "signature": "Authorised signatory",
+      "demoData": "Demo data"
+    },
+    "signature": {
+      "title": "Programme signature",
+      "hint": "Only the applicant signs their contract by hand, from their own portal.",
+      "nameLabel": "Authorised signatory",
+      "nameRequired": "Enter the name of the authorised signatory",
+      "currentLabel": "Currently applied to new contracts",
+      "padLabel": "Draw a new signature",
+      "saved": "Programme signature saved",
+      "reset": "Programme signature reset to the default"
+    },
+    "weightsTitle": "Criterion weights",
+    "weightsHint": "Weights must total 100% — every score is recalculated on save.",
+    "weightsSum": "Total weight",
+    "weightsInvalid": "Weights must total 100%",
+    "resetDefaults": "Reset to defaults",
+    "saved": "Criteria saved and scores recalculated",
+    "channelsTitle": "Notification channels",
+    "channelsHint": "Control which channels are active for each notification type.",
+    "demoData": {
+      "title": "Demo data",
+      "hint": "Reset the demo database to walk the full lifecycle from scratch, or put the seeded population back.",
+      "applications": "Applications",
+      "interviews": "Interviews",
+      "contracts": "Contracts",
+      "disbursements": "Disbursements",
+      "followUps": "Follow-ups",
+      "notifications": "Notifications",
+      "startClean": "Start clean",
+      "restore": "Restore demo data",
+      "urlHint": "Tip: open the app with ?empty=1 to start with no data.",
+      "startCleanConfirmTitle": "Clear all demo data?",
+      "startCleanConfirmBody": "Every application, interview, contract, disbursement, follow-up and notification will be removed, so you can walk the whole cycle from scratch. You can restore the seeded data at any time.",
+      "restoreConfirmTitle": "Restore the seeded demo data?",
+      "restoreConfirmBody": "This replaces everything currently in the demo with the original seeded population. Anything you created will be lost.",
+      "cleared": "Demo data cleared — the platform is empty",
+      "restored": "Seeded demo data restored"
+    }
+  },
+  "timeline": {
+    "title": "Application history",
+    "submitted": "Application submitted",
+    "statusChanged": "Status changed to {{status}}",
+    "documentUploaded": "Document uploaded: {{doc}}",
+    "documentMissing": "Flagged as missing: {{doc}}",
+    "notificationSent": "Notification sent: {{trigger}}",
+    "interviewScheduled": "Interview scheduled",
+    "interviewCompleted": "Interview completed",
+    "contractGenerated": "Contract generated: {{contractNo}}",
+    "contractSent": "Contract sent for signature",
+    "contractSigned": "Contract signed",
+    "disbursementOrdered": "Payment order issued",
+    "disbursementPaid": "Funds disbursed",
+    "followUpSubmitted": "Follow-up report received",
+    "scoreComputed": "Score computed: {{score}}",
+    "by": "by"
+  },
+  "validation": {
+    "required": "This field is required",
+    "minLength": "Must be at least {{count}} characters",
+    "maxLength": "Must be at most {{count}} characters",
+    "nationalId": "National ID must be 10 digits starting with 1 or 2",
+    "phone": "Mobile number must start with 05 and be 10 digits",
+    "email": "Enter a valid email address",
+    "iban": "IBAN must start with SA and be 24 characters",
+    "min": "Minimum allowed value is {{min}}",
+    "max": "Maximum allowed value is {{max}}",
+    "amountRange": "Amount must be between {{min}} and {{max}} SAR",
+    "acceptTerms": "You must accept the terms and conditions",
+    "requiredDocs": "Please upload all required documents",
+    "crRequired": "Commercial register number is required"
+  }
+}
