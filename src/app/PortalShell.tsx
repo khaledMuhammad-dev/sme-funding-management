@@ -134,7 +134,7 @@ export function PortalShell() {
           <Wordmark />
 
           <nav
-            className="ms-auto flex min-w-0 flex-wrap items-center justify-end gap-0.5"
+            className="m-auto flex min-w-0 flex-wrap items-center justify-end gap-0.5"
             aria-label={t('nav.portal')}
           >
             {NAV.map((item) => (
