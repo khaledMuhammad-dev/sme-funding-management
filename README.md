@@ -15,9 +15,16 @@ npm install
 npm run dev
 ```
 
-▶ **[docs/DEMO.md](docs/DEMO.md)** (العربية: [docs/DEMO.ar.md](docs/DEMO.ar.md)) —
-the step-by-step happy-scenario walkthrough (applicant submits → screening → interview → approval → contract &
-e-signature → disbursement → follow-up report). Demo OTP for signing: `1234`.
+▶ **Demo walkthrough** — the happy scenario (applicant submits → screening →
+interview → approval → contract & e-signature → disbursement → follow-up
+report), in the version that suits you:
+
+- **[docs/DEMO.md](docs/DEMO.md)** — step-by-step text guide
+  (العربية: [docs/DEMO.ar.md](docs/DEMO.ar.md))
+- **[docs/DEMO.visual.md](docs/DEMO.visual.md)** — 📸 illustrated version, with
+  a real screenshot of every step
+
+Demo OTP for signing: `1234`.
 
 ## What's inside
 
