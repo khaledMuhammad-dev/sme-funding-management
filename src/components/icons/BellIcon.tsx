@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { motion, useAnimationControls, useReducedMotion } from 'framer-motion'
+import type { Transition } from 'framer-motion'
 import { useMorphHost } from './MorphIcon'
 import type { MorphIconProps } from './MorphIcon'
 import { cn } from '@/lib/utils'
@@ -9,9 +10,12 @@ import { prefersReducedMotion } from '@/lib/gsap'
  * The bell, drawn as two parts so it can actually be rung.
  *
  * Body and clapper are separate paths sharing one pivot at the crown. On hover
- * the clapper swings first and the body swings *against* it, each settling
- * through a decaying overshoot — the counter-rotation is what reads as a ring
- * rather than as an icon being wobbled.
+ * a quick strike throws the clapper out (one fast, eased-out impulse) and the
+ * body swings *against* it a beat later; from there both settle as a pendulum
+ * does — half-periods of near-constant duration while the amplitude decays,
+ * easing in and out at each extreme. The constant period plus the
+ * counter-rotation is what reads as a ring rather than as an icon being
+ * wobbled.
  *
  * Rotation is Framer Motion's job; GSAP is reserved for SVG path morphing, so
  * nothing here touches it.
@@ -20,10 +24,33 @@ import { prefersReducedMotion } from '@/lib/gsap'
 /** Pivot at the crown: both parts hang from the same point, as a real bell does. */
 const PIVOT = '12px 5px'
 
-/** Decaying swing. The body trails the clapper and travels less far. */
-const CLAPPER_SWING = [0, 15, -11, 7, -4, 2, 0]
-const BODY_SWING = [0, -7, 5, -3.5, 2, -1, 0]
-const SWING_MS = 900
+/**
+ * Decaying swing, nine points / eight segments. The clapper is the light part
+ * being thrown, so it travels furthest; the heavy body reacts against it and
+ * trails behind.
+ */
+const CLAPPER_SWING = [0, 18, -15, 12, -9, 6.5, -4, 2, 0]
+const BODY_SWING = [0, -8, 7, -5.5, 4, -3, 2, -1, 0]
+
+/**
+ * Only the strike is quick. After it the half-periods stay near-equal, because
+ * a pendulum's period does not shorten as its amplitude decays.
+ */
+const SWING_TIMES = [0, 0.09, 0.21, 0.33, 0.45, 0.57, 0.7, 0.84, 1]
+
+/** One ease per segment: the impulse eases out, every swing after it eases both ends. */
+const SWING_EASE: Transition['ease'] = [
+  'easeOut',
+  'easeInOut',
+  'easeInOut',
+  'easeInOut',
+  'easeInOut',
+  'easeInOut',
+  'easeInOut',
+  'easeInOut',
+]
+
+const SWING_MS = 1200
 
 export interface BellIconProps extends Omit<MorphIconProps, 'paths'> {
   /** Rings once, unprompted — used when a message actually arrives. */
@@ -53,6 +80,20 @@ export function BellIcon({
   */
   const armed = useRef(true)
 
+  /*
+    One ring, driven from both triggers. The body starts a beat after the
+    clapper — that lag is what sells the counter-rotation.
+  */
+  const ring = useCallback(() => {
+    const transition: Transition = {
+      duration: SWING_MS / 1000,
+      times: SWING_TIMES,
+      ease: SWING_EASE,
+    }
+    void clapper.start({ rotate: CLAPPER_SWING, transition })
+    void body.start({ rotate: BODY_SWING, transition: { ...transition, delay: 0.06 } })
+  }, [clapper, body])
+
   useEffect(() => {
     if (!hovered) {
       armed.current = true
@@ -61,18 +102,14 @@ export function BellIcon({
     if (!armed.current || reduced) return
     armed.current = false
 
-    const transition = { duration: SWING_MS / 1000, ease: 'easeOut' as const }
-    void clapper.start({ rotate: CLAPPER_SWING, transition })
-    void body.start({ rotate: BODY_SWING, transition: { ...transition, delay: 0.04 } })
-  }, [hovered, reduced, clapper, body])
+    ring()
+  }, [hovered, reduced, ring])
 
   // A message arriving rings the same bell, so the gesture is learned once.
   useEffect(() => {
     if (!ringing || reduced) return
-    const transition = { duration: SWING_MS / 1000, ease: 'easeOut' as const }
-    void clapper.start({ rotate: CLAPPER_SWING, transition })
-    void body.start({ rotate: BODY_SWING, transition: { ...transition, delay: 0.04 } })
-  }, [ringing, reduced, clapper, body])
+    ring()
+  }, [ringing, reduced, ring])
 
   return (
     <svg
