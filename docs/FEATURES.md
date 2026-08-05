@@ -66,7 +66,7 @@
 - [x] F9.4 Beneficiary notifications list on `/track`; channel toggles in settings
 
 ## Polish (award pass)
-- [ ] P1 Skeletons/empty/error states everywhere; zero layout shift
-- [ ] P2 Full RTL audit (both languages, every page) + dark-mode audit
-- [ ] P3 Reduced-motion support; keyboard focus audit
+- [x] P1 Skeletons/empty/error states everywhere; zero layout shift
+- [x] P2 Full RTL audit (both languages, every page) + dark-mode audit
+- [x] P3 Reduced-motion support; keyboard focus audit
 - [x] P4 Demo script dry-run: full lifecycle walkthrough with no dead ends
