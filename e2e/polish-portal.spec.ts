@@ -153,12 +153,14 @@ for (const lang of ['en', 'ar'] as const) {
 }
 
 /**
- * The hero is a pinned scroll story: a tall track with a `sticky` viewport-sized
- * scene inside it. Every transform is derived from scroll progress, so these
- * assert the properties that make that legible rather than any pixel — the two
- * photo layers registered at rest, motion that is already obvious within the
- * first 150px, copy that stays readable and clickable until the reader has
- * committed, and a scene that is gone by the time the track hands over.
+ * Above `lg` the hero is a pinned scroll story: a tall track with a `sticky`
+ * viewport-sized scene inside it. Every transform is derived from scroll
+ * progress, so these assert the properties that make that legible rather than
+ * any pixel — the two photo layers registered at rest, motion that is already
+ * obvious within the first 150px, copy that stays readable and clickable until
+ * the reader has committed, and a scene that is gone by the time the track hands
+ * over. Below `lg` there is no story at all, and `transforms` is what proves it:
+ * the animated layers must carry a literal `none`, not an identity matrix.
  */
 async function heroFrame(page: Page) {
   return page.evaluate(() => {
@@ -170,7 +172,7 @@ async function heroFrame(page: Page) {
     const track = q('[data-testid="landing-hero"]')!
     const subject = q('[data-testid="hero-subject"]')!
     const stage = subject.parentElement!
-    const word = q('[data-testid="hero-word"]')!.getBoundingClientRect()
+    const word = q('[data-testid="hero-word"]')!
     const copy = q('[data-testid="hero-copy"]')!
     return {
       pinned: track.dataset.pinned,
@@ -180,10 +182,18 @@ async function heroFrame(page: Page) {
       sceneOpacity: +getComputedStyle(stage.parentElement!).opacity,
       /* Positive once the backdrop has sunk below the lifted cutout. */
       separation: mid(stage.firstElementChild) - mid(subject),
-      wordEnd: word.left + word.width,
+      wordEnd: word.getBoundingClientRect().left + word.getBoundingClientRect().width,
       copyOpacity: +getComputedStyle(copy).opacity,
       copyPointer: getComputedStyle(copy).pointerEvents,
       overflow: document.documentElement.scrollWidth - window.innerWidth,
+      /* Camera stage, backdrop, subject, ghost word — the four scroll-driven
+         layers. None of them carries an entrance animation, so anything other
+         than `none` here is parallax. */
+      transforms: [stage, stage.firstElementChild!, subject, word].map(
+        (el) => getComputedStyle(el).transform,
+      ),
+      /* Two photo layers always; the three coin sprites only when it is a story. */
+      images: document.querySelectorAll('[data-testid="landing-hero"] img').length,
     }
   })
 }
@@ -202,6 +212,7 @@ test('the pinned hero registers at rest, moves immediately and releases cleanly'
 
   const rest = await heroAt(page, 0)
   expect(rest.pinned).toBe('true')
+  expect(rest.images).toBe(5)
   // Track is materially taller than the scene, and the scene is the viewport.
   expect(rest.trackH).toBeGreaterThan(1600)
   expect(rest.sceneH).toBe(900)
@@ -239,37 +250,92 @@ test('the pinned hero registers at rest, moves immediately and releases cleanly'
   expect((await heroAt(page, travel + 400)).sceneTop).toBeLessThan(-300)
 })
 
-test('the hero story never overflows sideways, at either width', async ({ page }) => {
-  for (const [width, height] of [
-    [1440, 900],
-    [390, 844],
-  ] as const) {
-    await page.setViewportSize({ width, height })
-    await gotoApp(page, '/')
-    const { trackH } = await heroFrame(page)
-    for (const p of [0, 0.25, 0.5, 0.75, 1]) {
-      const frame = await heroAt(page, Math.round((trackH - height + 56) * p))
-      expect(frame.overflow, `${width}px at progress ${p}`).toBeLessThanOrEqual(0)
-    }
+test('the hero story never overflows sideways at any point on the track', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await gotoApp(page, '/')
+  const { trackH } = await heroFrame(page)
+  for (const p of [0, 0.25, 0.5, 0.75, 1]) {
+    const frame = await heroAt(page, Math.round((trackH - 900 + 56) * p))
+    expect(frame.overflow, `progress ${p}`).toBeLessThanOrEqual(0)
   }
 })
 
-test('reduced motion gets an ordinary hero with no pinning and no parallax', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.setViewportSize({ width: 1440, height: 900 })
-  await gotoApp(page, '/')
-
+/**
+ * Below `lg` the story is off entirely: the scene is composed for a landscape
+ * frame and a pin costs a phone reader their only scroll gesture. What is left
+ * has to be an ordinary section — no track, no sticky, and layers that never
+ * acquire a transform however far the page is scrolled.
+ */
+async function expectStaticHero(page: Page, height: number) {
   const rest = await heroFrame(page)
   expect(rest.pinned).toBe('false')
   // No track: the section is its own content height, well under one viewport.
-  expect(rest.trackH).toBeLessThan(900)
-  expect(rest.separation).toBe(0)
+  expect(rest.trackH).toBeLessThan(height)
+  // The photo layers only; the coin sprites are not rendered at all.
+  expect(rest.images).toBe(2)
 
-  // Scrolling moves the hero away like any other section, unchanged.
-  const scrolled = await heroAt(page, 400)
-  expect(scrolled.separation).toBe(0)
-  expect(scrolled.sceneOpacity).toBe(1)
-  expect(scrolled.copyOpacity).toBe(1)
+  for (const y of [0, 200, 600, 1200]) {
+    const frame = await heroAt(page, y)
+    expect(frame.transforms, `transforms at ${y}px`).toEqual(['none', 'none', 'none', 'none'])
+    expect(frame.separation, `separation at ${y}px`).toBe(0)
+    expect(frame.sceneOpacity, `scene opacity at ${y}px`).toBe(1)
+    expect(frame.copyOpacity, `copy opacity at ${y}px`).toBe(1)
+    expect(frame.copyPointer, `copy pointer events at ${y}px`).toBe('auto')
+    expect(frame.overflow, `overflow at ${y}px`).toBeLessThanOrEqual(0)
+  }
+}
+
+for (const lang of ['en', 'ar'] as const) {
+  test(`below lg the hero is a plain static section (${lang})`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await gotoApp(page, '/', lang)
+
+    await expectStaticHero(page, 844)
+
+    /* The whole point of the static frame: the copy and both CTAs stay put.
+       Scoped to the hero — the navbar's own links collapse into the mobile menu
+       at this width and would answer a bare `a[href]` locator instead. */
+    await page.evaluate(() => window.scrollTo(0, 0))
+    const copy = page.getByTestId('hero-copy')
+    await expect(copy.getByRole('heading', { level: 1 })).toBeVisible()
+    await expect(copy.locator('a[href="/apply"]')).toBeVisible()
+    await expect(copy.locator('a[href="/track"]')).toBeVisible()
+  })
+}
+
+test('reduced motion gets an ordinary hero at desktop width too', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await gotoApp(page, '/')
+  await expectStaticHero(page, 900)
+})
+
+/**
+ * Crossing the breakpoint mid-scroll swaps two scenes with wildly different
+ * geometry. The failure it guards against is a scene left on a progress value
+ * measured in the other mode — half-animated, or pinned to a track that no
+ * longer exists.
+ */
+test('crossing the lg breakpoint mid-scroll strands neither scene', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await gotoApp(page, '/')
+
+  // Part-way through the story, where every layer is mid-transform...
+  expect((await heroAt(page, 400)).separation).toBeGreaterThan(75)
+
+  // ...shrink past `lg`: the story must be gone, not frozen where it stood.
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.waitForTimeout(200)
+  await expectStaticHero(page, 844)
+
+  // And back: a freshly measured track, still registered at rest at the top.
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.waitForTimeout(200)
+  const back = await heroAt(page, 0)
+  expect(back.pinned).toBe('true')
+  expect(back.trackH).toBeGreaterThan(1600)
+  expect(Math.abs(back.separation)).toBeLessThanOrEqual(1)
+  expect((await heroAt(page, 150)).separation).toBeGreaterThan(75)
 })
 
 // ── A + C. Track: empty state, loading state, error wiring ───────────────────

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useSyncExternalStore } from 'react'
 import { Link } from 'react-router-dom'
 import {
   motion,
@@ -62,18 +62,41 @@ import coinCopper from '@/assets/coin-copper.png'
      0.70 → 1.00  camera push into the seedling, fading out over the last tenth
                   so the scene hands the page back rather than cutting.            */
 
-/* Track length. Longer reads as a slower, more deliberate story; below `lg` it
-   is cut back because a phone's scroll gesture covers far less of the track per
-   swipe and 220vh there turns the hero into a chore.
+/* Track length. Longer reads as a slower, more deliberate story. Only ever
+   applied above `lg` — see the breakpoint note below.
 
    `dvh`, not `svh`/`lvh`: the sticky box has to match the visible viewport
    *exactly*. `svh` would leave a strip of the next section peeking under the
-   scene whenever the mobile URL bar retracts; `lvh` would push the bottom-
+   scene whenever the browser chrome retracts; `lvh` would push the bottom-
    anchored copy off screen whenever it is showing. `dvh` re-resolves as the
    chrome animates, and because every transform is progress-derived the reflow
    cannot strand the scene in a broken frame. */
-const TRACK = 'h-[170dvh] lg:h-[220dvh]'
+const TRACK = 'h-[220dvh]'
 const SCENE = 'sticky top-0 h-[100dvh]'
+
+/* Tailwind's `lg`, spelled exactly as the `lg:` variants compile it. The literal
+   `64rem` is load-bearing: `rem` inside a media query resolves against the
+   *initial* root font size, never this app's `clamp(14px, 1.5vw, 16px)` one, so
+   a hand-converted px value would part company with the CSS breakpoint on
+   precisely the narrow viewports this switch exists for. */
+const LG = '(min-width: 64rem)'
+
+function subscribeToLg(onChange: () => void) {
+  const query = window.matchMedia(LG)
+  query.addEventListener('change', onChange)
+  return () => query.removeEventListener('change', onChange)
+}
+
+/* `useSyncExternalStore` rather than state-in-an-effect: it reads the live query
+   during render, so a viewport that crossed the breakpoint between two renders
+   can never leave a frame drawn for the wrong mode. */
+function useIsDesktop() {
+  return useSyncExternalStore(
+    subscribeToLg,
+    () => window.matchMedia(LG).matches,
+    () => false,
+  )
+}
 
 /* The portal header is `sticky top-0`, so the track starts one header below the
    top of the viewport and cannot reach `start start` until the page has already
@@ -133,7 +156,6 @@ const DEPTH_STOPS = [0, 0.1, 0.45, 1] as const
 const BACKDROP_Y = ['-4%', '0.5%', '6.5%', '9%'] as const
 const SUBJECT_Y = ['-4%', '-6.5%', '-7.8%', '-8%'] as const
 const SUBJECT_SCALE = [1, 1.015, 1.04, 1.05] as const
-const STILL_4 = ['0%', '0%', '0%', '0%'] as const
 
 /* Coin travel as a fraction of each sprite's own `rise`, on the same
    front-loaded curve as the photo layers. */
@@ -149,7 +171,6 @@ const COIN_EASE = [0, 0.3, 0.86, 1] as const
 const WORD_STOPS = [0, 0.1, 0.3, 0.75, 1] as const
 const WORD_X = ['0vw', '2vw', '6vw', '-78vw', '-88vw'] as const
 const WORD_Y = ['0%', '-6%', '-14%', '-30%', '-36%'] as const
-const STILL_5 = ['0%', '0%', '0%', '0%', '0%'] as const
 
 /* Copy leaves before the crossing finishes, so the money shot plays over an
    uncluttered frame. It must not begin before the reader has committed to
@@ -207,7 +228,6 @@ interface CoinSpriteProps {
   progress: MotionValue<number>
   pointerX: MotionValue<number>
   pointerY: MotionValue<number>
-  reduced: boolean | null
 }
 
 /**
@@ -215,6 +235,9 @@ interface CoinSpriteProps {
  * scroll parallax, pointer parallax and an idle drift — and Framer Motion lets
  * one `y` win per element, so each gets its own nested node instead of fighting
  * over the same style.
+ *
+ * No reduced-motion branch: sprites are rendered only by the pinned scene, which
+ * exists only when motion is welcome and the viewport is wide.
  */
 function CoinSprite({
   src,
@@ -229,24 +252,23 @@ function CoinSprite({
   progress,
   pointerX,
   pointerY,
-  reduced,
 }: CoinSpriteProps) {
   const scrollY = useTransform(
     progress,
     [...COIN_STOPS],
-    reduced ? COIN_STOPS.map(() => 0) : COIN_EASE.map((f) => f * rise),
+    COIN_EASE.map((f) => f * rise),
   )
   const scrollScale = useTransform(
     progress,
     [...COIN_STOPS],
-    reduced ? COIN_STOPS.map(() => 1) : COIN_EASE.map((f) => 1 + f * (zoom - 1)),
+    COIN_EASE.map((f) => 1 + f * (zoom - 1)),
   )
   const offsetX = useTransform(pointerX, (v) => v * depth)
   const offsetY = useTransform(pointerY, (v) => v * depth)
 
   return (
     <motion.div style={{ y: scrollY, scale: scrollScale }} className={className}>
-      <motion.div style={reduced ? undefined : { x: offsetX, y: offsetY }}>
+      <motion.div style={{ x: offsetX, y: offsetY }}>
         <motion.img
           src={src}
           alt=""
@@ -257,7 +279,7 @@ function CoinSprite({
           loading="lazy"
           style={{ width: size, height: size }}
           className="select-none"
-          animate={reduced ? undefined : { y: [0, -9, 0], rotate: [0, spin, 0] }}
+          animate={{ y: [0, -9, 0], rotate: [0, spin, 0] }}
           transition={{ duration, delay, repeat: Infinity, ease: 'easeInOut' }}
         />
       </motion.div>
@@ -292,17 +314,42 @@ function CoinSprite({
  * point is a fact about the image. Mirroring them would move the word out from
  * behind the pot and lose the effect the layer exists for.
  *
- * ## Reduced motion
+ * ## When there is no story
  *
- * Not a slower story — no story. Pinning is itself motion the reader did not
- * ask for (the page stops responding to scroll for two viewports), so the track
- * collapses to an ordinary-height section and every transform resolves to its
- * rest value: the untouched photograph with the copy on it.
+ * Two conditions collapse the track to an ordinary-height section in which every
+ * transform resolves to its rest value — the untouched photograph with the copy
+ * on it, CTAs live from the first frame.
+ *
+ * *Reduced motion*, at any width: pinning is itself motion the reader did not
+ * ask for, since the page stops responding to scroll for two viewports.
+ *
+ * *Below `lg`*: the story is composed for a landscape frame. On a phone the
+ * scene is portrait, so the layers separate into a sliver, the ghost word's
+ * crossing is mostly off-screen, and a swipe covers so much of a two-viewport
+ * track that the choreography flashes past — while the pin holds the reader's
+ * only scroll gesture hostage above the fold. The desktop measurements are
+ * deliberately left untouched rather than retuned for portrait: one good
+ * composition and one honest static frame beat two mediocre ones.
+ *
+ * The ghost word stays in the static frame. It is a texture behind the pot at
+ * rest, not a moving part, and dropping it would leave the phone hero flatter
+ * than the desktop one's opening frame for no gain.
  */
 export function LandingHero() {
+  /* The pinned and static scenes are the same tree with different geometry, and
+     swapping between them mid-scroll would otherwise hand Framer's scroll
+     tracker a container it measured in the other mode — a scene stranded on a
+     stale progress value. Keying the mode remounts it, so every measurement and
+     every motion value is taken fresh against the layout actually on screen. */
+  const reduced = useReducedMotion() ?? false
+  const desktop = useIsDesktop()
+  const pinned = desktop && !reduced
+  return <HeroScene key={pinned ? 'pinned' : 'static'} pinned={pinned} reduced={reduced} />
+}
+
+function HeroScene({ pinned, reduced }: { pinned: boolean; reduced: boolean }) {
   const { t } = useTranslation()
   const lang = useUiStore((s) => s.lang)
-  const reduced = useReducedMotion()
   const trackRef = useRef<HTMLElement>(null)
 
   const { scrollYProgress } = useScroll({
@@ -310,33 +357,28 @@ export function LandingHero() {
     offset: [SCROLL_START, 'end end'],
   })
 
+  /* These are derived unconditionally — they are hooks — but the static tree
+     binds none of them to a style. Withholding the binding, rather than feeding
+     the same hooks a table of rest values, is what makes "no parallax" literal:
+     the static layers carry `transform: none`, not an identity transform that
+     merely happens to be at rest. */
   const depth = [...DEPTH_STOPS]
-  const backdropY = useTransform(scrollYProgress, depth, [...(reduced ? STILL_4 : BACKDROP_Y)])
-  const subjectY = useTransform(scrollYProgress, depth, [...(reduced ? STILL_4 : SUBJECT_Y)])
-  const subjectScale = useTransform(
-    scrollYProgress,
-    depth,
-    reduced ? DEPTH_STOPS.map(() => 1) : [...SUBJECT_SCALE],
-  )
+  const backdropY = useTransform(scrollYProgress, depth, [...BACKDROP_Y])
+  const subjectY = useTransform(scrollYProgress, depth, [...SUBJECT_Y])
+  const subjectScale = useTransform(scrollYProgress, depth, [...SUBJECT_SCALE])
 
-  const wordX = useTransform(scrollYProgress, [...WORD_STOPS], [...(reduced ? STILL_5 : WORD_X)])
-  const wordY = useTransform(scrollYProgress, [...WORD_STOPS], [...(reduced ? STILL_5 : WORD_Y)])
+  const wordX = useTransform(scrollYProgress, [...WORD_STOPS], [...WORD_X])
+  const wordY = useTransform(scrollYProgress, [...WORD_STOPS], [...WORD_Y])
 
-  const copyOpacity = useTransform(scrollYProgress, [...COPY_OUT], reduced ? [1, 1] : [1, 0])
-  const copyY = useTransform(scrollYProgress, [...COPY_OUT], reduced ? [0, 0] : [0, -72])
+  const copyOpacity = useTransform(scrollYProgress, [...COPY_OUT], [1, 0])
+  const copyY = useTransform(scrollYProgress, [...COPY_OUT], [0, -72])
   /* The faded copy still occupies the frame, and an invisible CTA that swallows
      clicks is worse than no CTA — drop it out of the hit-testing the moment it
      is no longer readable. */
-  const copyPointer = useTransform(scrollYProgress, (p) =>
-    reduced || p < COPY_INERT_AT ? 'auto' : 'none',
-  )
+  const copyPointer = useTransform(scrollYProgress, (p) => (p < COPY_INERT_AT ? 'auto' : 'none'))
 
-  const cameraScale = useTransform(
-    scrollYProgress,
-    [0.7, 1],
-    reduced ? [1, 1] : [...CAMERA_SCALE],
-  )
-  const sceneOpacity = useTransform(scrollYProgress, [...RELEASE], reduced ? [1, 1] : [1, 0])
+  const cameraScale = useTransform(scrollYProgress, [0.7, 1], [...CAMERA_SCALE])
+  const sceneOpacity = useTransform(scrollYProgress, [...RELEASE], [1, 0])
 
   /* Pointer parallax. Normalised to −0.5…0.5 across the scene so each sprite
      can scale it by its own depth, then springed — the raw value is a step
@@ -365,12 +407,12 @@ export function LandingHero() {
 
   const handlePointerMove = useCallback(
     (event: React.PointerEvent<HTMLElement>) => {
-      if (!finePointer.current || reduced) return
+      if (!finePointer.current || !pinned) return
       const rect = event.currentTarget.getBoundingClientRect()
       pointerX.set((event.clientX - rect.left) / rect.width - 0.5)
       pointerY.set((event.clientY - rect.top) / rect.height - 0.5)
     },
-    [pointerX, pointerY, reduced],
+    [pointerX, pointerY, pinned],
   )
 
   const handlePointerLeave = useCallback(() => {
@@ -382,26 +424,26 @@ export function LandingHero() {
     <section
       ref={trackRef}
       data-testid="landing-hero"
-      data-pinned={reduced ? 'false' : 'true'}
-      className={`relative w-full ${reduced ? '' : TRACK}`}
+      data-pinned={pinned ? 'true' : 'false'}
+      className={`relative w-full ${pinned ? TRACK : ''}`}
     >
       <motion.div
         onPointerMove={handlePointerMove}
         onPointerLeave={handlePointerLeave}
-        style={reduced ? undefined : { opacity: sceneOpacity }}
+        style={pinned ? { opacity: sceneOpacity } : undefined}
         className={`relative isolate flex w-full items-end overflow-hidden lg:items-center ${
-          reduced ? 'min-h-[32rem] sm:min-h-[36rem] lg:min-h-[41rem]' : SCENE
+          pinned ? SCENE : 'min-h-[32rem] sm:min-h-[36rem] lg:min-h-[41rem]'
         }`}
       >
         {/* ── Camera stage: layers 1–4, pushed as one at the end of the story ── */}
         <motion.div
-          style={reduced ? undefined : { scale: cameraScale, transformOrigin: CAMERA_ORIGIN }}
+          style={pinned ? { scale: cameraScale, transformOrigin: CAMERA_ORIGIN } : undefined}
           className={`absolute inset-0 ${Z_STAGE}`}
         >
           {/* ── 1. Depth-of-field backdrop ───────────────────────────────── */}
           <motion.div
             aria-hidden="true"
-            style={{ y: backdropY }}
+            style={pinned ? { y: backdropY } : undefined}
             className={`absolute inset-x-0 ${OVER_SCAN} ${Z_BACKDROP}`}
           >
             <motion.img
@@ -417,7 +459,10 @@ export function LandingHero() {
               alt=""
               style={{ backgroundImage: `url(${heroBlur})` }}
               className="size-full bg-cover bg-center object-cover object-[30%_45%] lg:object-[24%_50%]"
-              // Ken Burns: a slow breath in and out, never a visible "start".
+              /* Ken Burns: a slow breath in and out, never a visible "start".
+                 Ambient rather than scroll-driven, and it moves nothing relative
+                 to anything else, so it survives into the static phone hero —
+                 only an explicit reduced-motion request stops it. */
               animate={reduced ? undefined : { scale: [1, 1.08, 1] }}
               transition={{ duration: 34, repeat: Infinity, ease: 'linear' }}
             />
@@ -428,7 +473,10 @@ export function LandingHero() {
               is only possible because the word is behind the cutout and in front
               of the blur. Outline rather than fill, in a `--foreground`-derived
               colour, so one declaration stays subtle over the photograph in both
-              themes. */}
+              themes.
+
+              It is kept in the static scene too, parked at its rest offset,
+              where it still reads as a plane between the blur and the pot. */}
           <div
             dir="ltr"
             aria-hidden="true"
@@ -437,8 +485,7 @@ export function LandingHero() {
             <motion.span
               data-testid="hero-word"
               style={{
-                y: wordY,
-                x: wordX,
+                ...(pinned ? { y: wordY, x: wordX } : null),
                 fontSize: 'clamp(4.5rem, 16vw, 17rem)',
                 color: 'transparent',
                 /* Heavier than it was when a readability scrim was permanently
@@ -459,7 +506,7 @@ export function LandingHero() {
               Only the scroll transforms differ. */}
           <motion.div
             data-testid="hero-subject"
-            style={{ y: subjectY, scale: subjectScale }}
+            style={pinned ? { y: subjectY, scale: subjectScale } : undefined}
             className={`absolute inset-x-0 ${OVER_SCAN} ${Z_SUBJECT}`}
           >
             <img
@@ -485,60 +532,61 @@ export function LandingHero() {
               photograph — on wide screens it is exactly where the headline
               stands, and a sprite placed there lands behind the copy scrim and
               disappears. Coins on the jar itself vanish too, into the coins
-              already in it. */}
-          <div
-            dir="ltr"
-            aria-hidden="true"
-            className={`pointer-events-none absolute inset-0 ${Z_COINS}`}
-          >
-            <CoinSprite
-              src={coinGold}
-              className="absolute start-[17%] top-[54%] opacity-80"
-              size={54}
-              rise={-520}
-              zoom={1.28}
-              depth={14}
-              spin={9}
-              duration={7}
-              delay={0}
-              progress={scrollYProgress}
-              pointerX={springX}
-              pointerY={springY}
-              reduced={reduced}
-            />
-            <CoinSprite
-              src={coinSilver}
-              className="absolute hidden start-[8%] top-[19%] opacity-60 blur-[1px] sm:block"
-              size={44}
-              rise={-380}
-              zoom={1.2}
-              depth={10}
-              spin={-7}
-              duration={9}
-              delay={0.8}
-              progress={scrollYProgress}
-              pointerX={springX}
-              pointerY={springY}
-              reduced={reduced}
-            />
-            {/* Only above `lg`: below it the copy climbs the frame and this one
-                starts competing with the eyebrow. */}
-            <CoinSprite
-              src={coinCopper}
-              className="absolute hidden start-[41%] top-[14%] opacity-50 blur-[2px] lg:block"
-              size={38}
-              rise={-280}
-              zoom={1.14}
-              depth={6}
-              spin={6}
-              duration={11}
-              delay={1.6}
-              progress={scrollYProgress}
-              pointerX={springX}
-              pointerY={springY}
-              reduced={reduced}
-            />
-          </div>
+              already in it.
+
+              Purely a scroll-parallax layer: without the story they are three
+              decals pinned to a still photograph, so the static scene omits
+              them entirely rather than rendering them inert. */}
+          {pinned ? (
+            <div
+              dir="ltr"
+              aria-hidden="true"
+              className={`pointer-events-none absolute inset-0 ${Z_COINS}`}
+            >
+              <CoinSprite
+                src={coinGold}
+                className="absolute start-[17%] top-[54%] opacity-80"
+                size={54}
+                rise={-520}
+                zoom={1.28}
+                depth={14}
+                spin={9}
+                duration={7}
+                delay={0}
+                progress={scrollYProgress}
+                pointerX={springX}
+                pointerY={springY}
+              />
+              <CoinSprite
+                src={coinSilver}
+                className="absolute start-[8%] top-[19%] opacity-60 blur-[1px]"
+                size={44}
+                rise={-380}
+                zoom={1.2}
+                depth={10}
+                spin={-7}
+                duration={9}
+                delay={0.8}
+                progress={scrollYProgress}
+                pointerX={springX}
+                pointerY={springY}
+              />
+              <CoinSprite
+                src={coinCopper}
+                className="absolute start-[41%] top-[14%] opacity-50 blur-[2px]"
+                size={38}
+                rise={-280}
+                zoom={1.14}
+                depth={6}
+                spin={6}
+                duration={11}
+                delay={1.6}
+                progress={scrollYProgress}
+                pointerX={springX}
+                pointerY={springY}
+              />
+            </div>
+          ) : null}
         </motion.div>
 
         {/* ── 5. Scrims ──────────────────────────────────────────────────────
@@ -555,7 +603,7 @@ export function LandingHero() {
             vertical. */}
         <motion.div
           aria-hidden="true"
-          style={reduced ? undefined : { opacity: copyOpacity }}
+          style={pinned ? { opacity: copyOpacity } : undefined}
           className={`absolute inset-0 bg-gradient-to-t from-background via-background/88 via-40% to-background/5 lg:hidden ${Z_SCRIM}`}
         />
         {/* Wide screens: the field comes in from the open right half only, so the
@@ -563,7 +611,7 @@ export function LandingHero() {
             track the physically pinned copy, not the writing direction. */}
         <motion.div
           aria-hidden="true"
-          style={reduced ? undefined : { opacity: copyOpacity }}
+          style={pinned ? { opacity: copyOpacity } : undefined}
           className={`absolute inset-0 hidden bg-gradient-to-l from-background via-background/90 via-38% to-transparent lg:block ${Z_SCRIM}`}
         />
         <div
@@ -579,7 +627,9 @@ export function LandingHero() {
         <motion.div
           dir="ltr"
           data-testid="hero-copy"
-          style={reduced ? undefined : { opacity: copyOpacity, y: copyY, pointerEvents: copyPointer }}
+          style={
+            pinned ? { opacity: copyOpacity, y: copyY, pointerEvents: copyPointer } : undefined
+          }
           className="relative flex w-full max-w-6xl px-4 pb-14 pt-28 sm:px-6 lg:mx-auto lg:py-24"
         >
           {/* The auto margin has to live on an element that is still `ltr`:
