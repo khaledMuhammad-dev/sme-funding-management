@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { ensureGsap, prefersReducedMotion } from '@/lib/gsap'
@@ -101,6 +101,55 @@ export function useMorphHost(
   return hovered
 }
 
+/**
+ * Splits an icon's `d` into its subpaths. Only uppercase `M` ever starts one in
+ * this library, so the lookahead is exact.
+ */
+function splitSubpaths(d: string): string[] {
+  return d
+    .split(/(?=M)/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+}
+
+const SVG_NS = 'http://www.w3.org/2000/svg'
+const seedCache = new Map<string, number>()
+
+/** Length of a subpath, measured once per unique `d`. */
+function subpathLength(d: string): number {
+  const cached = seedCache.get(d)
+  if (cached !== undefined) return cached
+  let length = Number.POSITIVE_INFINITY
+  if (typeof document !== 'undefined') {
+    const probe = document.createElementNS(SVG_NS, 'path')
+    probe.setAttribute('d', d)
+    try {
+      length = probe.getTotalLength()
+    } catch {
+      length = Number.POSITIVE_INFINITY
+    }
+  }
+  seedCache.set(d, length)
+  return length
+}
+
+/** Below this a subpath has no length of its own — it is a dot, or a seed. */
+const DEGENERATE = 0.5
+
+/**
+ * Is this subpath a seed — the hair-wide placeholder a state carries so that a
+ * part it does not have yet still has something to be paired with?
+ *
+ * Measured rather than declared, so the contract stays in the path data where
+ * an author can see it. It takes BOTH states to answer: plenty of real glyphs
+ * are drawn as zero-length dots (the typing dots in a speech bubble, the point
+ * under a warning's bang), and those are dots in either state. A seed is a
+ * subpath with no length whose counterpart has plenty.
+ */
+function isSeed(d: string, counterpart: string): boolean {
+  return subpathLength(d) < DEGENERATE && subpathLength(counterpart) >= DEGENERATE
+}
+
 export interface MorphIconProps {
   paths: MorphPaths
   /** Pins the active shape (current route, unread bell) regardless of hover. */
@@ -130,36 +179,91 @@ export function MorphIcon({
   trigger = 'host',
 }: MorphIconProps) {
   const svgRef = useRef<SVGSVGElement>(null)
-  const pathRef = useRef<SVGPathElement>(null)
+  const pathRefs = useRef<(SVGPathElement | null)[]>([])
   /* Bound to whatever element actually represents the control. */
   const hovered = useMorphHost(svgRef, trigger)
   const shouldBeActive = active || hovered
   const reducedMotion = useReducedMotion()
 
-  useEffect(() => {
-    const node = pathRef.current
-    if (!node) return
+  /*
+    Every subpath is rendered as its own <path> and tweened against the subpath
+    at the SAME INDEX in the other state. That is the whole point: handed one
+    string containing several subpaths, MorphSVG has to guess which goes with
+    which, and its guess is driven by size and position — so a tick sitting in
+    the middle of the box and a badge ring sitting in the middle of the box are
+    indistinguishable to it, and it will happily unroll the tick into the ring
+    while the ring's seed grows into a tick. The endpoints still land correctly,
+    which is why the bug only shows up mid-tween. Pairing by index removes the
+    guess entirely and lets paths.ts mean what it says.
 
-    const target = shouldBeActive ? paths.active : paths.idle
+    The exception is a pair whose subpath counts differ — moon ↔ sun, where one
+    crescent becomes a disc plus eight rays. There is no index pairing to make,
+    so that one goes through as a single path and MorphSVG splits it, which is
+    exactly the behaviour that pair was drawn for.
+  */
+  const idleParts = useMemo(() => splitSubpaths(paths.idle), [paths.idle])
+  const activeParts = useMemo(() => splitSubpaths(paths.active), [paths.active])
+  const paired = idleParts.length === activeParts.length
+  const renderedParts = paired ? idleParts : [paths.idle]
+
+  /*
+    A seed has no length, so it would still paint a round cap — a stray dot in
+    the middle of the icon. Fading it out is what lets a seed sit wherever its
+    part should actually grow from, rather than being hidden under whatever ink
+    happens to be nearby: the badge ring can open from the dead centre of the
+    glyph instead of inflating across it from a corner. Opacity is Framer's;
+    GSAP is still only touching `d`.
+  */
+  const seedOpacity = (i: number) => {
+    if (!paired) return 1
+    const [current, other] = shouldBeActive
+      ? [activeParts[i], idleParts[i]]
+      : [idleParts[i], activeParts[i]]
+    return isSeed(current, other) ? 0 : 1
+  }
+
+  useEffect(() => {
+    const targets = paired
+      ? shouldBeActive
+        ? activeParts
+        : idleParts
+      : [shouldBeActive ? paths.active : paths.idle]
 
     if (prefersReducedMotion()) {
-      node.setAttribute('d', target)
+      targets.forEach((target, i) => pathRefs.current[i]?.setAttribute('d', target))
       return
     }
 
     const gsap = ensureGsap()
-    // `back.out` overshoots the target shape slightly before settling — the
-    // morph reads as a deliberate gesture instead of a shape that quietly
-    // swapped while nobody was looking.
-    const tween = gsap.to(node, {
-      duration: 0.45,
-      ease: shouldBeActive ? 'back.out(2.2)' : 'power3.inOut',
-      morphSVG: target,
+    /*
+      Three things make a 20px shape change register at all.
+
+      Duration: long enough to be followed. A morph under ~0.4s is over before
+      the eye finds it and just reads as a swap.
+
+      Overshoot: `back.out` carries the shape past its target and settles back,
+      so the change announces itself instead of arriving quietly.
+
+      Stagger: each subpath starts a beat after the one before it, so the icon
+      redraws as a short sequence — the doorway widens and *then* the door
+      swings, the page clears and *then* the check lands — rather than every
+      part moving at once, which the eye reads as a single blur. Leaving runs
+      the stagger backwards, so the icon unwinds the way it was built.
+    */
+    const tweens = targets.map((target, i) => {
+      const node = pathRefs.current[i]
+      if (!node) return null
+      return gsap.to(node, {
+        duration: shouldBeActive ? 0.6 : 0.48,
+        delay: (shouldBeActive ? i : targets.length - 1 - i) * (shouldBeActive ? 0.045 : 0.03),
+        ease: shouldBeActive ? 'back.out(2.2)' : 'back.out(1.2)',
+        morphSVG: target,
+      })
     })
     return () => {
-      tween.kill()
+      for (const tween of tweens) tween?.kill()
     }
-  }, [shouldBeActive, paths.active, paths.idle])
+  }, [shouldBeActive, paired, idleParts, activeParts, paths.active, paths.idle])
 
   return (
     // The morph alone is easy to miss at 16–20px, so the whole glyph springs a
@@ -175,9 +279,9 @@ export function MorphIcon({
       animate={
         reducedMotion
           ? { scale: 1, rotate: 0 }
-          : { scale: shouldBeActive ? 1.14 : 1, rotate: shouldBeActive ? -4 : 0 }
+          : { scale: shouldBeActive ? 1.22 : 1, rotate: shouldBeActive ? -7 : 0 }
       }
-      transition={{ type: 'spring', stiffness: 420, damping: 13, mass: 0.6 }}
+      transition={{ type: 'spring', stiffness: 340, damping: 11.5, mass: 0.7 }}
     >
       <svg
         ref={svgRef}
@@ -195,7 +299,23 @@ export function MorphIcon({
         aria-label={title}
       >
         {title ? <title>{title}</title> : null}
-        <path ref={pathRef} d={paths.idle} />
+        {renderedParts.map((part, i) => (
+          <motion.path
+            // Index IS the identity here — subpath i of idle is subpath i of active.
+            key={i}
+            ref={(node) => {
+              pathRefs.current[i] = node
+            }}
+            d={part}
+            initial={false}
+            animate={{ opacity: seedOpacity(i) }}
+            transition={
+              reducedMotion
+                ? { duration: 0 }
+                : { duration: 0.3, ease: 'easeOut', delay: shouldBeActive ? i * 0.045 : 0 }
+            }
+          />
+        ))}
       </svg>
     </motion.span>
   )

@@ -3,10 +3,19 @@ import { test, expect, gotoApp } from './support/app'
 const bell = (page: import('@playwright/test').Page) =>
   page.getByTestId('portal-notification-bell')
 
+/*
+  The swing lives on the motion group WRAPPING each part's <path> — the dome
+  rotates around its crown (transform-origin 12px 4px), the clapper slides
+  horizontally as a free-hanging sibling — so the group is what carries the
+  computed transform, never the path itself.
+*/
 const transformOf = (page: import('@playwright/test').Page, part: 'body' | 'clapper') =>
   page.evaluate((name) => {
-    const node = document.querySelector(`[data-testid="portal-notification-bell"] [data-part="${name}"]`)
-    return node ? getComputedStyle(node).transform : null
+    const node = document.querySelector(
+      `[data-testid="portal-notification-bell"] [data-part="${name}"]`,
+    )
+    const group = node?.closest('g')
+    return group ? getComputedStyle(group).transform : null
   }, part)
 
 test('hovering the bell swings the clapper and the body against it', async ({ page }) => {
@@ -16,21 +25,29 @@ test('hovering the bell swings the clapper and the body against it', async ({ pa
 
   await bell(page).hover()
 
-  // Sample mid-swing: the two parts must be rotating in opposite directions.
+  /*
+    Sample mid-swing: the two parts must move against each other. The dome
+    ROTATES (matrix `b` = sin of its angle) while the clapper — a free part
+    swinging inside, not a second copy of the dome — TRANSLATES (matrix `e`).
+    A negative-angle throw swings the dome one way while the clapper heads the
+    other, so an opposed sample is one where the two signs coincide in time.
+    Their decays are deliberately out of step, so we sample repeatedly and need
+    only one moment where both are in flight.
+  */
   let sawOpposed = false
   for (let i = 0; i < 12 && !sawOpposed; i++) {
     const [bodyT, clapperT] = await Promise.all([
       transformOf(page, 'body'),
       transformOf(page, 'clapper'),
     ])
-    const skew = (value: string | null) => {
-      // matrix(a, b, c, d, e, f) — `b` carries the sign of the rotation.
+    const component = (value: string | null, index: number) => {
       const match = value?.match(/matrix\(([^)]+)\)/)
-      return match ? Number(match[1].split(',')[1]) : 0
+      return match ? Number(match[1].split(',')[index]) : 0
     }
-    const b = skew(bodyT)
-    const c = skew(clapperT)
-    if (b !== 0 && c !== 0 && Math.sign(b) !== Math.sign(c)) sawOpposed = true
+    const bodyRotation = component(bodyT, 1) // `b` — sign of the dome's angle
+    const clapperTravel = component(clapperT, 4) // `e` — sign of the slide
+    if (bodyRotation !== 0 && clapperTravel !== 0 && Math.sign(bodyRotation) !== Math.sign(clapperTravel))
+      sawOpposed = true
     await page.waitForTimeout(60)
   }
 
