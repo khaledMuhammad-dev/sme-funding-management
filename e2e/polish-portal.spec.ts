@@ -152,6 +152,126 @@ for (const lang of ['en', 'ar'] as const) {
   })
 }
 
+/**
+ * The hero is a pinned scroll story: a tall track with a `sticky` viewport-sized
+ * scene inside it. Every transform is derived from scroll progress, so these
+ * assert the properties that make that legible rather than any pixel — the two
+ * photo layers registered at rest, motion that is already obvious within the
+ * first 150px, copy that stays readable and clickable until the reader has
+ * committed, and a scene that is gone by the time the track hands over.
+ */
+async function heroFrame(page: Page) {
+  return page.evaluate(() => {
+    const q = (s: string) => document.querySelector(s) as HTMLElement | null
+    const mid = (el: Element | null) => {
+      const r = el!.getBoundingClientRect()
+      return r.top + r.height / 2
+    }
+    const track = q('[data-testid="landing-hero"]')!
+    const subject = q('[data-testid="hero-subject"]')!
+    const stage = subject.parentElement!
+    const word = q('[data-testid="hero-word"]')!.getBoundingClientRect()
+    const copy = q('[data-testid="hero-copy"]')!
+    return {
+      pinned: track.dataset.pinned,
+      trackH: track.getBoundingClientRect().height,
+      sceneTop: stage.parentElement!.getBoundingClientRect().top,
+      sceneH: stage.parentElement!.getBoundingClientRect().height,
+      sceneOpacity: +getComputedStyle(stage.parentElement!).opacity,
+      /* Positive once the backdrop has sunk below the lifted cutout. */
+      separation: mid(stage.firstElementChild) - mid(subject),
+      wordEnd: word.left + word.width,
+      copyOpacity: +getComputedStyle(copy).opacity,
+      copyPointer: getComputedStyle(copy).pointerEvents,
+      overflow: document.documentElement.scrollWidth - window.innerWidth,
+    }
+  })
+}
+
+async function heroAt(page: Page, y: number) {
+  await page.evaluate((v) => window.scrollTo(0, v), y)
+  await page.waitForTimeout(150)
+  return heroFrame(page)
+}
+
+test('the pinned hero registers at rest, moves immediately and releases cleanly', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await gotoApp(page, '/')
+
+  const rest = await heroAt(page, 0)
+  expect(rest.pinned).toBe('true')
+  // Track is materially taller than the scene, and the scene is the viewport.
+  expect(rest.trackH).toBeGreaterThan(1600)
+  expect(rest.sceneH).toBe(900)
+  // The still frame is the untouched photograph: both halves in the same place.
+  expect(Math.abs(rest.separation)).toBeLessThanOrEqual(1)
+  expect(rest.copyOpacity).toBe(1)
+  expect(rest.copyPointer).toBe('auto')
+
+  /* No dead zone. A pinned hero's failure mode is reading as a stuck page, so
+     the depth split has to be plainly visible within a wheel notch or two. */
+  expect((await heroAt(page, 80)).separation).toBeGreaterThan(40)
+  expect((await heroAt(page, 150)).separation).toBeGreaterThan(75)
+
+  /* Progress 0 is anchored one header below the viewport top, so the track is
+     played out a little past this — near enough for sampling, and the end-state
+     checks below deliberately overshoot. */
+  const travel = rest.trackH - 900 + 56
+
+  // Quarter way in the copy is still untouched — the CTAs are the page's point.
+  const quarter = await heroAt(page, Math.round(travel * 0.25))
+  expect(quarter.copyOpacity).toBe(1)
+  expect(quarter.copyPointer).toBe('auto')
+
+  // Three quarters in the word has completed its crossing and left the frame,
+  // and the faded copy no longer swallows clicks.
+  const late = await heroAt(page, Math.round(travel * 0.75))
+  expect(late.wordEnd).toBeLessThan(0)
+  expect(late.copyOpacity).toBe(0)
+  expect(late.copyPointer).toBe('none')
+
+  // The scene hands the page back rather than being shoved off it.
+  const end = await heroAt(page, travel + 120)
+  expect(end.sceneOpacity).toBe(0)
+  // Past the track the scene has stopped sticking, so nothing overlaps below.
+  expect((await heroAt(page, travel + 400)).sceneTop).toBeLessThan(-300)
+})
+
+test('the hero story never overflows sideways, at either width', async ({ page }) => {
+  for (const [width, height] of [
+    [1440, 900],
+    [390, 844],
+  ] as const) {
+    await page.setViewportSize({ width, height })
+    await gotoApp(page, '/')
+    const { trackH } = await heroFrame(page)
+    for (const p of [0, 0.25, 0.5, 0.75, 1]) {
+      const frame = await heroAt(page, Math.round((trackH - height + 56) * p))
+      expect(frame.overflow, `${width}px at progress ${p}`).toBeLessThanOrEqual(0)
+    }
+  }
+})
+
+test('reduced motion gets an ordinary hero with no pinning and no parallax', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await gotoApp(page, '/')
+
+  const rest = await heroFrame(page)
+  expect(rest.pinned).toBe('false')
+  // No track: the section is its own content height, well under one viewport.
+  expect(rest.trackH).toBeLessThan(900)
+  expect(rest.separation).toBe(0)
+
+  // Scrolling moves the hero away like any other section, unchanged.
+  const scrolled = await heroAt(page, 400)
+  expect(scrolled.separation).toBe(0)
+  expect(scrolled.sceneOpacity).toBe(1)
+  expect(scrolled.copyOpacity).toBe(1)
+})
+
 // ── A + C. Track: empty state, loading state, error wiring ───────────────────
 
 test('track shows a demo prompt while empty and a sized skeleton while loading', async ({
