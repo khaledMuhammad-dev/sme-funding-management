@@ -18,6 +18,7 @@ import { useDemoDataStore } from '@/stores/useDemoDataStore'
 import { useUiStore } from '@/stores/useUiStore'
 import { formatCurrency } from '@/lib/format'
 import { ROUTES } from '../routes'
+import { LandingHero } from './LandingHero'
 
 const STEPS = [
   { key: 'submit', icon: ApplicationsIcon },
@@ -40,89 +41,13 @@ export default function LandingPage() {
   const active = applications.filter((a) => ['disbursed', 'follow_up'].includes(a.status))
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+    <div className="w-full">
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="grid items-center gap-10 py-16 lg:grid-cols-[1.15fr_1fr] lg:py-24">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="space-y-6"
-        >
-          <span className="inline-flex items-center gap-2 rounded-full border border-gold bg-gold-soft px-3 py-1 text-xs font-semibold text-gold-ink">
-            <span className="size-1.5 rounded-full bg-gold-ink" />
-            {t('landing.eyebrow')}
-          </span>
+      <LandingHero />
 
-          <h1 className="text-4xl font-semibold leading-[1.15] tracking-tight text-balance sm:text-5xl">
-            {t('landing.title')}
-          </h1>
-
-          <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
-            {t('landing.subtitle')}
-          </p>
-
-          <div className="flex flex-wrap gap-3">
-            <Button asChild size="lg" className="bg-terracotta text-terracotta-foreground shadow-soft-sm hover:bg-terracotta/90 border border-terracotta-ink">
-              <Link to={ROUTES.apply}>
-                {t('landing.ctaApply')}
-                <ArrowIcon size={17} className="rtl-flip" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link to={ROUTES.track}>{t('landing.ctaTrack')}</Link>
-            </Button>
-          </div>
-        </motion.div>
-
-        {/* A quiet, honest picture of the journey rather than stock decoration. */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.97 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.55, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative rounded-2xl border border-border bg-card p-6 shadow-soft-lg"
-        >
-          <div className="absolute -top-3 end-6 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-            APP-{new Date().getFullYear()}-0042
-          </div>
-
-          <ol className="flex flex-col">
-            {STEPS.map((step, index) => {
-              const done = index < 4
-              const current = index === 4
-              return (
-                <li key={step.key} data-morph-host className="grid grid-cols-[1.75rem_1fr] gap-x-3">
-                  <div className="flex flex-col items-center">
-                    <span
-                      className={
-                        done
-                          ? 'flex size-7 items-center justify-center rounded-full bg-success-soft text-success'
-                          : current
-                            ? 'flex size-7 items-center justify-center rounded-full bg-terracotta text-terracotta-foreground'
-                            : 'flex size-7 items-center justify-center rounded-full border border-border bg-muted text-muted-foreground'
-                      }
-                    >
-                      {done ? <CheckIcon size={14} strokeWidth={2.6} /> : <step.icon size={14} />}
-                    </span>
-                    {index < STEPS.length - 1 ? (
-                      <span className={`w-px flex-1 ${done ? 'bg-success' : 'bg-border'}`} />
-                    ) : null}
-                  </div>
-                  <div className={index < STEPS.length - 1 ? 'pb-4' : ''}>
-                    <p className="text-sm font-semibold">{t(`landing.steps.${step.key}.title`)}</p>
-                    <p className="text-xs leading-relaxed text-muted-foreground">
-                      {t(`landing.steps.${step.key}.desc`)}
-                    </p>
-                  </div>
-                </li>
-              )
-            })}
-          </ol>
-        </motion.div>
-      </section>
-
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
       {/* ── Impact ───────────────────────────────────────────────────────── */}
-      <section className="pb-16">
+      <section className="pb-16 pt-12">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard label={t('landing.stats.beneficiaries')} value={applications.length} />
           <StatCard
@@ -137,13 +62,63 @@ export default function LandingPage() {
       </section>
 
       {/* ── Journey ──────────────────────────────────────────────────────── */}
-      <section className="border-t border-border py-16">
-        <div className="mb-8 space-y-2">
-          <h2 className="text-2xl font-semibold tracking-tight">{t('landing.stepsTitle')}</h2>
-          <p className="text-muted-foreground">{t('landing.stepsSubtitle')}</p>
+      <section className="grid gap-8 border-t border-border py-16 lg:grid-cols-[19rem_1fr] lg:gap-10">
+        <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-semibold tracking-tight">{t('landing.stepsTitle')}</h2>
+            <p className="text-muted-foreground">{t('landing.stepsSubtitle')}</p>
+          </div>
+
+          {/* A real application mid-journey, beside the stages that describe it —
+              the stages in the abstract on one side, one file moving through
+              them on the other. Moved off the hero when the photograph took it. */}
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="relative rounded-2xl border border-border bg-card p-6 shadow-soft-lg"
+          >
+            <div className="absolute -top-3 end-6 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+              APP-{new Date().getFullYear()}-0042
+            </div>
+
+            <ol className="flex flex-col">
+              {STEPS.map((step, index) => {
+                const done = index < 4
+                const current = index === 4
+                return (
+                  <li key={step.key} data-morph-host className="grid grid-cols-[1.75rem_1fr] gap-x-3">
+                    <div className="flex flex-col items-center">
+                      <span
+                        className={
+                          done
+                            ? 'flex size-7 items-center justify-center rounded-full bg-success-soft text-success'
+                            : current
+                              ? 'flex size-7 items-center justify-center rounded-full bg-terracotta text-terracotta-foreground'
+                              : 'flex size-7 items-center justify-center rounded-full border border-border bg-muted text-muted-foreground'
+                        }
+                      >
+                        {done ? <CheckIcon size={14} strokeWidth={2.6} /> : <step.icon size={14} />}
+                      </span>
+                      {index < STEPS.length - 1 ? (
+                        <span className={`w-px flex-1 ${done ? 'bg-success' : 'bg-border'}`} />
+                      ) : null}
+                    </div>
+                    <div className={index < STEPS.length - 1 ? 'pb-4' : ''}>
+                      <p className="text-sm font-semibold">{t(`landing.steps.${step.key}.title`)}</p>
+                      <p className="text-xs leading-relaxed text-muted-foreground">
+                        {t(`landing.steps.${step.key}.desc`)}
+                      </p>
+                    </div>
+                  </li>
+                )
+              })}
+            </ol>
+          </motion.div>
         </div>
 
-        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ol className="grid gap-4 sm:grid-cols-2">
           {STEPS.map((step, index) => (
             <motion.li
               key={step.key}
@@ -209,6 +184,7 @@ export default function LandingPage() {
           </Button>
         </div>
       </section>
+      </div>
     </div>
   )
 }
